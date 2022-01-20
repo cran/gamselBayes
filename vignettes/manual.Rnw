@@ -1,0 +1,16 @@
+\documentclass[a4paper]{article}
+%\VignetteIndexEntry{gamselBayes User Manual}
+%\VignettePackage{gamselBayes} 
+\usepackage{pdfpages}
+
+\begin{document}
+
+\newread\PDFtoInclude
+\openin\PDFtoInclude=gamselBayes.pdf
+\ifeof\PDFtoInclude
+\typeout{No file gamselBayes.pdf}
+\else
+\includepdf[fitpaper=true,pages=-]{gamselBayes.pdf}
+\fi
+
+\end{document}
