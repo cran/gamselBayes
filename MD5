@@ -1,4 +1,4 @@
-9e97d17bd79d1ab015b5f535679e5d51 *DESCRIPTION
+55f6939afe35a30c2a32c2787a532c06 *DESCRIPTION
 b4e1fb65bca7df78fd4640a6218faebe *NAMESPACE
 f9d66a8691312c3ff238ece29757027e *R/RcppExports.R
 0ae3a6f22bf3a8192fb900413de222e0 *R/ZOSull.r
@@ -46,10 +46,10 @@ b6e64cb7bacbde5287d721bc98bb6388 *R/summGBpredProc.r
 8aa7c45a6df7667f7464478b35eaef7c *R/vecIsLowUniq.r
 7a077057f50c237eb034fe7b7a3702b7 *R/vectorIsBinary.r
 a62d89cb1deb3818cc8febf61cf5320a *R/vectorIsConstant.r
-d4f25db26374a9e19cf0088ca2d5cc38 *R/zzz.r
+3406a297128d6393093077872567ff9c *R/zzz.r
 52413a0032c52797921e04b52527dd7d *build/vignette.rds
 7ecd18bfb4278adfd1614ffaedb86b68 *inst/doc/manual.Rnw
-cb504b9baa27d31f4d76fac66e4c2a25 *inst/doc/manual.pdf
+dcca9ed2608146de11ffa066be39b3d6 *inst/doc/manual.pdf
 0941c13ec241f168870f362596366569 *man/checkChains.Rd
 a23409470c18db8d58aafde1eb0bf4d8 *man/effectTypes.Rd
 b489ecb1d2de89e48cfbdfc2a8157d48 *man/effectTypesVector.Rd
@@ -67,8 +67,8 @@ c17377b89dfb87d50093ad240c31949b *man/plot.gamselBayes.Rd
 b3e943b7ad540a1a7be36e9799e47317 *src/drawInvGaussVec.cpp
 41a74af376db62450d68f89c72e23288 *src/drawInvGaussVec.h
 166366d31c58d05d54a175ef169ffcc1 *src/elemProdChk.cpp
-64d78f93150b9de991057e31b5af4a74 *src/gamselBayesMCMCinner.cpp
-51aa1b9c2cfa4c8aa6c3219762aeef6a *src/gamselBayesMFVBinner.cpp
+7a4d9d2747bd23c37ef8e329aac155ba *src/gamselBayesMCMCinner.cpp
+d041f346d0ac1afeb75f47342f89ea9b *src/gamselBayesMFVBinner.cpp
 fa12c6662fbf14098db4bfc9e54569c4 *src/logPhi.cpp
 147c5c9804b35f54bd183a59e3d6301c *src/logPhi.h
 e205ecb6bbc15b3290447bedb9f88e8f *src/omitMatCol.cpp
@@ -79,7 +79,7 @@ b8b7c96341f25a939f03ccf3628ff12a *src/omitMatCol.h
 cf52bb764afa694641005e777bbd14fb *src/printPercMsgs.h
 a560ecff59c297fb383a5d70f8012365 *src/rTruncNormPos.cpp
 7ade7e3dbd6658d4a87d627d0dc13e6a *src/rTruncNormPos.h
-f3b84a4cddafda16de1315cb38b00aa3 *src/zetad.cpp
+c0f51fde246f8bab6ec301085af57ccc *src/zetad.cpp
 9416f5bb66c1ffa60454cfd773f7e5f1 *src/zetad.h
 d0e53125166319a88245bda4d67d254a *vignettes/gamselBayes.pdf
 7ecd18bfb4278adfd1614ffaedb86b68 *vignettes/manual.Rnw

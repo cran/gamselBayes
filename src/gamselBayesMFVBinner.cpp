@@ -3,7 +3,7 @@
 /* Carries out mean field variational Bayes fitting of a 
    specified gamsel-type model. */
 
-/* Last changed: 06 DEC 2021 */
+/* Last changed: 09 FEB 2022 */
 
 #include <RcppArmadillo.h>
 #include "printPercMsgs.h"
@@ -399,7 +399,7 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
       
       if (itNum>2)
       {
-         relErr = abs((logMargLik(itNum-1)/logMargLik(itNum-2)) - 1.0); 
+         relErr = fabs((logMargLik(itNum-1)/logMargLik(itNum-2)) - 1.0); 
          if (relErr<toler)
          {
             converged = TRUE;

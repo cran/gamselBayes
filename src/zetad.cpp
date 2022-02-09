@@ -2,7 +2,7 @@
 
 /* Computes the first derivative of the zeta function.  */
 
-/* Last changed: 06 DEC 2021 */
+/* Last changed: 09 FEB 2022 */
 
 #include <Rcpp.h>
 
@@ -44,7 +44,7 @@ double zetad(double x)
       Dprv = 0.0;
       Delta = 2.0 + toler;
       j = 0;
-      while (abs(Delta-1.0)>toler)
+      while (fabs(Delta-1.0)>toler)
       {
          j = j + 1;
          aj = j - 1;
@@ -53,13 +53,13 @@ double zetad(double x)
             aj = 1.0;
          }
          Dcur = aj*Dprv - x;
-         if (abs(Dcur)<tiny) 
+         if (fabs(Dcur)<tiny) 
          {
             Dcur = tiny;
          }
          Dcur = 1/Dcur;
          Ccur = (aj/Cprv) - x;
-         if (abs(Ccur)<tiny)
+         if (fabs(Ccur)<tiny)
          {
             Ccur = tiny;
          }

@@ -2,7 +2,7 @@
 
 /* Carries out Markov chain Monte Carlo for a gamsel-type model. */
 
-/* Last changed: 06 DEC 2021 */
+/* Last changed: 09 FEB 2022 */
 
 #include <RcppArmadillo.h>
 #include "printPercMsgs.h"
