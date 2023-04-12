@@ -70,12 +70,12 @@ predictGBnewdataProc <- function(newdata,fitObject)
 
       shiftMat <- matrix(rep(meanXlinear,nrow(XlinearNew)),
                          nrow(XlinearNew),ncol(XlinearNew),byrow=TRUE)
-
+      
       XlinearNew <- as.data.frame(t(t(XlinearNew- shiftMat)/sdXlinear))
 
       names(XlinearNew) <- namesSave
    }
-
+   
    # Transform the "XgeneralNew" values to match the transformed "Xgeneral" data:
 
    if (!is.null(fitObject$Xgeneral))
@@ -89,7 +89,7 @@ predictGBnewdataProc <- function(newdata,fitObject)
                          nrow(XgeneralNew),ncol(XgeneralNew),byrow=TRUE)
 
       XgeneralNew <- as.data.frame(t(t(XgeneralNew - shiftMat)/sdXgeneral))
-
+      
       names(XgeneralNew) <- namesSave 
    } 
 

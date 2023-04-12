@@ -3,14 +3,14 @@
 # For prediction based on new data from a gamselBayes() 
 # fit object.
 
-# Last changed: 06 DEC 2021
+# Last changed: 11 APR 2023
 
 predict.gamselBayes <- function(object,newdata,type="response",...)
 {
    fitObject <- object
 
    # Process the newdata input:
-
+   
    processedInput <- predictGBnewdataProc(newdata,fitObject)
    XlinearNew <- processedInput$XlinearNew
    XgeneralNew <- processedInput$XgeneralNew
@@ -18,7 +18,7 @@ predict.gamselBayes <- function(object,newdata,type="response",...)
    dLinear <- processedInput$dLinear
    dGeneral <- processedInput$dGeneral
    lenPred <- processedInput$lenPred
-
+   
    # Check the legality of the "type" argument:
 
    if (!any(type==c("link","response","terms")))
@@ -128,8 +128,8 @@ predict.gamselBayes <- function(object,newdata,type="response",...)
 
          # Add the current linear effect contributions to the "etaPredMCMC" matrix:
 
-         xNewCurr <- XNew[,indsEstNonlinEff[jNonlin]-dLinear]
-
+         xNewCurr <- XNew[,indsEstNonlinEff[jNonlin]]
+          
          if (method=="MCMC")
          {
             betaMCMCcurr <- as.matrix(betaMCMC[,indsEstNonlinEff[jNonlin]-dLinear])
@@ -144,7 +144,7 @@ predict.gamselBayes <- function(object,newdata,type="response",...)
          }
 
          # Determine spline basis for the current original data:
-
+          
          rangexCurr <- rangexList[[indsEstNonlinEff[jNonlin]-dLinear]]
          intKnotsCurr <- intKnotsList[[indsEstNonlinEff[jNonlin]-dLinear]]
          OStoDRmatCurr <- OStoDRmatList[[indsEstNonlinEff[jNonlin]-dLinear]]
@@ -195,13 +195,13 @@ predict.gamselBayes <- function(object,newdata,type="response",...)
            # Extract and obtain required coefficients:
 
             mu.q.uTildeCurr <- fitObject$MFVB$uTilde[[1]][[indsEstNonlinEff[jNonlin]-dLinear]]
-            mu.q.gammaCurr <- fitObject$MFVB$gammaU[[1]][[indsEstNonlinEff[jNonlin]-dLinear]]
+            mu.q.gammaCurr <- fitObject$MFVB$gammaU[[indsEstNonlinEff[jNonlin]-dLinear]]
             mu.q.uCurr <- mu.q.gammaCurr*mu.q.uTildeCurr
-
+             
             # Obtain the estimated component over the full data:
 
             termMFVBcurr <- as.vector(crossprod(t(Zcurr),mu.q.uCurr[1:ncol(Zcurr)]))
-
+             
             # Add on the new prediction term:
 
             termCurrFull <- termCurrFull + termMFVBcurr
@@ -230,7 +230,6 @@ predict.gamselBayes <- function(object,newdata,type="response",...)
          predMatNames <- c(names(XlinearNew),names(XgeneralNew))
 
       names(predMat) <- predMatNames
-
 
       # Add on the intercept prediction as an attribute:
 
@@ -263,7 +262,6 @@ predict.gamselBayes <- function(object,newdata,type="response",...)
          predVec <- pnorm(predVec) 
     
       return(predVec)
-
    }
 }
 

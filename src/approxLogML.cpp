@@ -3,7 +3,7 @@
 /* Computes the mean field variational Bayes approximate logarithm of the
    marginal likelihood of the model corresponding to gamselBayesMFVBinnner. */
 
-/* Last changed: 17 OCT 2021 */
+/* Last changed: 06 APR 2023 */
 
 #include <RcppArmadillo.h>
 
@@ -54,9 +54,9 @@ double approxLogML(double muqBetaZero, double sigsqqBeta0, arma::vec muqgammaBet
    for (int j=0; j<ncX; j++)
       answer = answer - 0.5/muqbBeta(j);
 
-   answer = answer + muqrecipaBeta*muqrecipSigsqBeta - 0.5*(ncX + 1.0)*log(lambdaqSigsqBeta);
+   answer = answer - muqrecipaBeta*muqrecipSigsqBeta - 0.5*(ncX + 1.0)*log(lambdaqSigsqBeta);
    answer = answer + muqrecipSigsqBeta*lambdaqSigsqBeta - muqrecipaBeta/(sBetaHYP*sBetaHYP);
-   answer = answer + lambdaqaBeta*muqrecipaBeta;
+   answer = answer + lambdaqaBeta*muqrecipaBeta - log(lambdaqaBeta);
 
    for (int j=0; j<dGeneral; j++)
    {
@@ -76,7 +76,7 @@ double approxLogML(double muqBetaZero, double sigsqqBeta0, arma::vec muqgammaBet
       answer = answer - 0.5/muqbU(j) + muqrecipaU(j)*muqrecipSigsqU(j);
       answer = answer - 0.5*(ncZvec(j) + 1.0)*log(lambdaqSigsqU(j));
       answer = answer + muqrecipSigsqU(j)*lambdaqSigsqU(j) - muqrecipaU(j)/(sUHYP*sUHYP);
-      answer = answer + lambdaqaU(j)*muqrecipaU(j);
+      answer = answer + lambdaqaU(j)*muqrecipaU(j) - log(lambdaqaU(j));      
    }   
 
    if (familyNum==1)

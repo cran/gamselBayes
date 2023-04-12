@@ -4,7 +4,7 @@
 # iterations for fitting and inference for the 
 # Bayesian gamsel-type model.
 
-# Last changed: 19 JAN 2022
+# Last changed: 09 FEB 2022
 
 gamselBayesMFVB <- function(y,X,Z,ncZvec,family,XTy,XTX,ZTy,ZTX,ZTZ,hyperPars,
                             maxIter,toler,msgCode)
@@ -81,7 +81,7 @@ gamselBayesMFVB <- function(y,X,Z,ncZvec,family,XTy,XTX,ZTy,ZTX,ZTZ,hyperPars,
 
    if ((msgCode>0)&(stopType==0))
    {
-      msgStr1 <- "\n   The mean field variational Bayes iterations converged"
+      msgStr1 <- "\n   The mean field variational Bayes algorithm converged"
       msgStr2 <- paste(" after ",numIters," iterations.\n\n",sep="")
       cat(paste(msgStr1,msgStr2,sep=""))
    }

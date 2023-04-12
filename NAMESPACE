@@ -1,5 +1,6 @@
 useDynLib(gamselBayes,.registration = TRUE)
 import(Rcpp)
+import(methods)
 importFrom(grDevices,colors)
 importFrom(grDevices,pdf)
 importFrom(graphics,lines)

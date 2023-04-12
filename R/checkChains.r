@@ -3,7 +3,7 @@
 # For graphically checking the Markov chain Monte Carlo 
 # samples ("chains") of a gamselBayes() fit object.
 
-# Last changed: 14 JAN 2022
+# Last changed: 06 APR 2023
 
 checkChains <- function(fitObject,colourVersion=TRUE,paletteNum=1)
 {
@@ -72,6 +72,7 @@ checkChains <- function(fitObject,colourVersion=TRUE,paletteNum=1)
       }
       if (numMCMCsamps>0)
       {
+          
          # Extract the predictor values:
 
          Xlinear <- fitObject$Xlinear
@@ -206,41 +207,41 @@ checkChains <- function(fitObject,colourVersion=TRUE,paletteNum=1)
                MCMCsampsToPlotNonlin[,j] <- fHatMCMCcurr[indMedian,] 
             }
          }
-      }
+       
+         # Combine the matrices of MCMC samples of both type:
 
-      # Combine the matrices of MCMC samples of both type:
-
-      if (is.null(MCMCsampsToPlotLin)) MCMCsampsToPlot <- MCMCsampsToPlotNonlin
-      if (is.null(MCMCsampsToPlotNonlin)) MCMCsampsToPlot <- MCMCsampsToPlotLin
-      if ((!is.null(MCMCsampsToPlotLin))&(!is.null(MCMCsampsToPlotNonlin)))
-         MCMCsampsToPlot <- as.matrix(cbind(MCMCsampsToPlotLin,MCMCsampsToPlotNonlin))
+         if (is.null(MCMCsampsToPlotLin)) MCMCsampsToPlot <- MCMCsampsToPlotNonlin
+         if (is.null(MCMCsampsToPlotNonlin)) MCMCsampsToPlot <- MCMCsampsToPlotLin
+         if ((!is.null(MCMCsampsToPlotLin))&(!is.null(MCMCsampsToPlotNonlin)))
+            MCMCsampsToPlot <- as.matrix(cbind(MCMCsampsToPlotLin,MCMCsampsToPlotNonlin))
   
-      # Re-order the samples alphabetically:
+         # Re-order the samples alphabetically:
 
-      alphaOrder <- order(predNames)
-      predNames <- predNames[alphaOrder]
-      MCMCsampsToPlot <- MCMCsampsToPlot[,alphaOrder]
+         alphaOrder <- order(predNames)
+         predNames <- predNames[alphaOrder]
+         MCMCsampsToPlot <- as.matrix(MCMCsampsToPlot[,alphaOrder])
 
-      # Determine number of views for plotting:
+         # Determine number of views for plotting:
 
-      numMCMCsampsToPlot <- ncol(MCMCsampsToPlot)
-      numSampsPerView <- 6
-      numViews <- ceiling(numMCMCsampsToPlot/numSampsPerView)
+         numMCMCsampsToPlot <- ncol(MCMCsampsToPlot)
+         numSampsPerView <- 6
+         numViews <- ceiling(numMCMCsampsToPlot/numSampsPerView)
 
-      # Loop through the views:
+         # Loop through the views:
 
-      indsStt <- 1
-      for (iView in 1:numViews)
-      {
-         indsEnd <- indsStt + numSampsPerView - 1
-         if (indsEnd>numMCMCsampsToPlot)
-            indsEnd <- numMCMCsampsToPlot
-         indsCurr <- indsStt:indsEnd
-         summChainsGamsel(as.matrix(MCMCsampsToPlot[,indsCurr]),predNames[indsCurr],
-                          colourVersion=colourVersion,paletteNum=paletteNum)
-         indsStt <- indsEnd + 1
-         if (indsEnd<numMCMCsampsToPlot)
-            readline("Hit Enter to view the next checkChains() plot.\n")
+         indsStt <- 1
+         for (iView in 1:numViews)
+         {
+            indsEnd <- indsStt + numSampsPerView - 1
+            if (indsEnd>numMCMCsampsToPlot)
+               indsEnd <- numMCMCsampsToPlot
+            indsCurr <- indsStt:indsEnd
+            summChainsGamsel(as.matrix(MCMCsampsToPlot[,indsCurr]),predNames[indsCurr],
+                             colourVersion=colourVersion,paletteNum=paletteNum)
+            indsStt <- indsEnd + 1
+            if (indsEnd<numMCMCsampsToPlot)
+               readline("Hit Enter to view the next checkChains() plot.\n")
+         }
       }
    }
 

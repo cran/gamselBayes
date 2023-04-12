@@ -66,18 +66,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// elemProdChk
-arma::vec elemProdChk(arma::vec a, arma::vec b);
-RcppExport SEXP _gamselBayes_elemProdChk(SEXP aSEXP, SEXP bSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type a(aSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type b(bSEXP);
-    rcpp_result_gen = Rcpp::wrap(elemProdChk(a, b));
-    return rcpp_result_gen;
-END_RCPP
-}
 // gamselBayesMCMCinner
 List gamselBayesMCMCinner(arma::vec y, arma::mat X, arma::mat Z, int familyNum, arma::uvec ncZvec, int ncZmax, int dGeneral, arma::uvec ZsttInds, arma::uvec ZendInds, arma::vec XTy, arma::mat XTX, arma::vec ZTy, arma::mat ZTX, arma::mat ZTZ, double sigmaBeta0HYP, double sepsHYP, double sbetaHYP, double suHYP, double AbetaHYP, double BbetaHYP, double AuHYP, double BuHYP, int numMCMC, int msgCode);
 RcppExport SEXP _gamselBayes_gamselBayesMCMCinner(SEXP ySEXP, SEXP XSEXP, SEXP ZSEXP, SEXP familyNumSEXP, SEXP ncZvecSEXP, SEXP ncZmaxSEXP, SEXP dGeneralSEXP, SEXP ZsttIndsSEXP, SEXP ZendIndsSEXP, SEXP XTySEXP, SEXP XTXSEXP, SEXP ZTySEXP, SEXP ZTXSEXP, SEXP ZTZSEXP, SEXP sigmaBeta0HYPSEXP, SEXP sepsHYPSEXP, SEXP sbetaHYPSEXP, SEXP suHYPSEXP, SEXP AbetaHYPSEXP, SEXP BbetaHYPSEXP, SEXP AuHYPSEXP, SEXP BuHYPSEXP, SEXP numMCMCSEXP, SEXP msgCodeSEXP) {
@@ -222,7 +210,6 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_gamselBayes_approxLogML", (DL_FUNC) &_gamselBayes_approxLogML, 34},
     {"_gamselBayes_drawInvGaussVec", (DL_FUNC) &_gamselBayes_drawInvGaussVec, 1},
-    {"_gamselBayes_elemProdChk", (DL_FUNC) &_gamselBayes_elemProdChk, 2},
     {"_gamselBayes_gamselBayesMCMCinner", (DL_FUNC) &_gamselBayes_gamselBayesMCMCinner, 24},
     {"_gamselBayes_gamselBayesMFVBinner", (DL_FUNC) &_gamselBayes_gamselBayesMFVBinner, 25},
     {"_gamselBayes_logPhi", (DL_FUNC) &_gamselBayes_logPhi, 1},

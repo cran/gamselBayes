@@ -9,10 +9,6 @@ drawInvGaussVec <- function(muVec) {
     .Call(`_gamselBayes_drawInvGaussVec`, muVec)
 }
 
-elemProdChk <- function(a, b) {
-    .Call(`_gamselBayes_elemProdChk`, a, b)
-}
-
 gamselBayesMCMCinner <- function(y, X, Z, familyNum, ncZvec, ncZmax, dGeneral, ZsttInds, ZendInds, XTy, XTX, ZTy, ZTX, ZTZ, sigmaBeta0HYP, sepsHYP, sbetaHYP, suHYP, AbetaHYP, BbetaHYP, AuHYP, BuHYP, numMCMC, msgCode) {
     .Call(`_gamselBayes_gamselBayesMCMCinner`, y, X, Z, familyNum, ncZvec, ncZmax, dGeneral, ZsttInds, ZendInds, XTy, XTX, ZTy, ZTX, ZTZ, sigmaBeta0HYP, sepsHYP, sbetaHYP, suHYP, AbetaHYP, BbetaHYP, AuHYP, BuHYP, numMCMC, msgCode)
 }
