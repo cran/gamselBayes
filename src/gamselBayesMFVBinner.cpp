@@ -3,7 +3,7 @@
 /* Carries out mean field variational Bayes fitting of a 
    specified gamsel-type model. */
 
-/* Last changed: 09 FEB 2022 */
+/* Last changed: 01 AUG 2023 */
 
 #include <RcppArmadillo.h>
 #include "printPercMsgs.h"
@@ -19,8 +19,7 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
                           int ncZmax, int dGeneral, arma::uvec ZsttInds, arma::uvec ZendInds,
                           arma::vec XTy, arma::mat XTX, arma::vec ZTy, arma::mat ZTX, arma::mat ZTZ,
                           double sigmaBeta0HYP, double sEpsHYP, double sBetaHYP, double sUHYP, 
-                          double AbetaHYP, double BbetaHYP, double AuHYP,double BuHYP,
-                          int maxIter, double toler, int msgCode) 
+                          double rhoBetaHYP, double rhoUHYP,int maxIter, double toler, int msgCode) 
 {
    /* Declare all non-input variables: */
 
@@ -30,8 +29,8 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
    int percCnt; 
    arma::mat wZmat(ncZmax,dGeneral);
    arma::vec innVec(ncZmax);
-   double muqBetaZero;
-   double sigsqqBetaZero;
+   double muqBeta0;
+   double sigsqqBeta0;
    arma::vec muqBetaTilde(ncX);
    arma::mat SigmaqBetaTildeInv(ncX,ncX);
    arma::mat SigmaqBetaTilde(ncX,ncX);
@@ -43,9 +42,6 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
    double muqrecipaBeta;
    double kappaqaBeta; 
    double lambdaqaBeta;
-   double AqrhoBeta;
-   double BqrhoBeta;
-   double muqlogitrhoBeta;
    arma::vec muqgammaBeta(ncX);
    arma::mat muqUtilde(ncZmax,dGeneral);
    arma::mat muqu(ncZmax,dGeneral);
@@ -56,17 +52,14 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
    arma::vec lambdaqSigsqU(dGeneral);
    arma::vec muqrecipaU(dGeneral);
    double kappaqaU; 
-   arma::vec lambdaqaU(dGeneral); 
-   arma::vec AqrhoU(dGeneral);
-   arma::vec BqrhoU(dGeneral);
-   double muqlogitrhoUj;
-   arma::mat muqgammaU(ncZmax,dGeneral);
+   arma::vec lambdaqaU(dGeneral);  
+   arma::vec muqgammaU(dGeneral);
    double muqrecipSigsqEps;
    double kappaqSigsqEps;
    double lambdaqSigsqEps;
    arma::mat innerMat(ncX,ncX);
    arma::mat trMat(ncX,ncX);
-   arma::vec muGammauFac(ncZmax);
+   double muGammauFac;
    double muqrecipaEps;
    double kappaqaEps;
    double lambdaqaEps;
@@ -88,6 +81,8 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
    arma::vec omega20(n);
    double etaCurr;
    double quadTerm;
+   double logitBeta;
+   double logitU;
    double yT1adj;
    arma::vec XTyAdj(ncX);
    arma::vec ZTyAdj(ncZ); 
@@ -124,13 +119,16 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
       muqrecipaU = arma::ones(dGeneral);
       kappaqaU = 1.0;
       lambdaqaU = arma::ones(dGeneral);
-      AqrhoU = arma::ones(dGeneral);
-      BqrhoU = arma::ones(dGeneral);
-      muqgammaU = 0.5*arma::ones(ncZmax,dGeneral);
+      muqgammaU = 0.5*arma::ones(dGeneral);
  
       for (int j=0; j<dGeneral; j++)
          kappaqSigsqU(j) = 0.5*(ncZvec(j) + 1.0);
    }
+
+   /* Compute the logit function constants: */
+
+   logitBeta = log(rhoBetaHYP/(1.0 - rhoBetaHYP));
+   logitU = log(rhoUHYP/(1.0 - rhoUHYP));
 
    /* Initialise the marginal log-likelihood vector and the
       number of iterations:                                   */
@@ -177,8 +175,8 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
       /* Update the q(beta_0) parameters: */
     
       omega12 = yT1adj;
-      sigsqqBetaZero = 1.0/(n*muqrecipSigsqEps+(1.0/(sigmaBeta0HYP*sigmaBeta0HYP)));
-      muqBetaZero = sigsqqBetaZero*muqrecipSigsqEps*omega12;
+      sigsqqBeta0 = 1.0/(n*muqrecipSigsqEps+(1.0/(sigmaBeta0HYP*sigmaBeta0HYP)));
+      muqBeta0 = sigsqqBeta0*muqrecipSigsqEps*omega12;
     
       /* Update the q(betaTilde) parameters: */
     
@@ -192,8 +190,7 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
          for (int j=0; j<dGeneral; j++)
          {
             ZTXj = ZTX.rows(ZsttInds(j),ZendInds(j));
-            omega13 = omega13 - ZTXj.t()*(muqgammaU.col(j).rows(0,Kminus1(j))
-                                          %muqUtilde.col(j).rows(0,Kminus1(j)));
+            omega13 = omega13 - muqgammaU(j)*ZTXj.t()*muqUtilde.col(j).rows(0,Kminus1(j));
          }
       }     
 
@@ -215,16 +212,12 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
     
       lambdaqaBeta = muqrecipSigsqBeta + (1.0/(sBetaHYP*sBetaHYP));
       muqrecipaBeta = kappaqaBeta/lambdaqaBeta;
-    
-      /* Update the q(rho_beta) parameters: */
-   
-      AqrhoBeta = AbetaHYP + sum(muqgammaBeta);
-      BqrhoBeta = BbetaHYP + ncX - sum(muqgammaBeta); 
-    
+      
       /* Update the q(gamma_beta) parameters: */
-    
-      muqlogitrhoBeta = R::digamma(AqrhoBeta) - R::digamma(BqrhoBeta);
-      muqu = muqgammaU%muqUtilde;  
+
+      for (int j=0; j<dGeneral; j++)
+         muqu.col(j) = muqgammaU(j)*muqUtilde.col(j);
+      
       for (int j=0 ; j<ncX ; j++)
       { 
          omega15 = XTyAdj(j);
@@ -242,15 +235,17 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
             omega15 = omega15 - sum((omitVecEnt(XTX.col(j),j)%omitVecEnt(muqgammaBeta,j))%innerVec);
          }
          quadTerm = ((muqBetaTilde(j)*muqBetaTilde(j)) + SigmaqBetaTilde(j,j))*XTX(j,j);
-         etaCurr = muqlogitrhoBeta - 0.5*muqrecipSigsqEps*(quadTerm-2.0*omega15);
+         etaCurr = logitBeta - 0.5*muqrecipSigsqEps*(quadTerm-2.0*omega15);
          muqgammaBeta(j) = 1.0/(1.0+exp(-etaCurr));
       }  
     
       if (dGeneral>0)
       {
+
          /* Update the q(u_Tilde) parameters: */
    
-         muqu = muqgammaU%muqUtilde;  
+         for (int j=0; j<dGeneral; j++)
+            muqu.col(j) = muqgammaU(j)*muqUtilde.col(j);
 
          for (int j=0; j<dGeneral ; j++)
          {
@@ -261,16 +256,14 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
             {
                ZTZjjd = ZTZ.rows(ZsttInds(j),ZendInds(j)).cols(ZsttInds(jd),ZendInds(jd));
                omega16 = omega16 - ZTZjjd*muqu.col(jd).rows(0,Kminus1(jd));
-
             }
+ 
             omega16 =  omega16 + (wZmat.rows(0,Kminus1(j)).col(j))%(muqu.rows(0,Kminus1(j)).col(j));   
-            sigsqqUtilde.rows(0,Kminus1(j)).col(j) = 1.0/((muqrecipSigsqEps*
-                                        (muqgammaU.rows(0,Kminus1(j)).col(j))%wZmat.rows(0,Kminus1(j)).col(j))
-                                        + (muqrecipSigsqU(j)*muqbU(j)*arma::ones(ncZvec(j))));
-            muqUtilde.rows(0,Kminus1(j)).col(j) = muqrecipSigsqEps*(muqgammaU.rows(0,Kminus1(j)).col(j)
-                                                  %omega16)%sigsqqUtilde.rows(0,Kminus1(j)).col(j);
+            sigsqqUtilde.rows(0,Kminus1(j)).col(j) = 1.0/(muqrecipSigsqEps*muqgammaU(j)*wZmat.rows(0,Kminus1(j)).col(j)
+                                                          + muqrecipSigsqU(j)*muqbU(j)*arma::ones(ncZvec(j)));
+            muqUtilde.rows(0,Kminus1(j)).col(j) = (muqrecipSigsqEps*muqgammaU(j)*omega16)%sigsqqUtilde.rows(0,Kminus1(j)).col(j);
          }
-    
+         
          /* Update the q(b_uj), q(sigsq_uj) and q(a_uj) parameters: */
      
          for (int j=0; j<dGeneral ; j++)
@@ -286,9 +279,10 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
          }
  
          /* Update the q(gamma_uj) parameters: */
-    
-         muqu = muqgammaU%muqUtilde;  
- 
+
+         for (int j=0; j<dGeneral; j++)
+            muqu.col(j) = muqgammaU(j)*muqUtilde.col(j);
+         
          for (int j=0; j<dGeneral ; j++)
          {
          
@@ -302,30 +296,25 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
             }
             omega18 = omega18 + (wZmat.rows(0,Kminus1(j)).col(j))%(muqu.rows(0,Kminus1(j)).col(j));     
 
-            AqrhoU(j) = AuHYP + sum(muqgammaU.rows(0,Kminus1(j)).col(j));
-            BqrhoU(j) = BuHYP + ncZvec(j)- sum(muqgammaU.rows(0,Kminus1(j)).col(j));
-            muqlogitrhoUj =  R::digamma(AqrhoU(j)) -  R::digamma(BqrhoU(j));
+            quadTerm = sum(wZmat.rows(0,Kminus1(j)).col(j)
+                           %(muqUtilde.rows(0,Kminus1(j)).col(j)%muqUtilde.rows(0,Kminus1(j)).col(j)
+                             +sigsqqUtilde.rows(0,Kminus1(j)).col(j)));
 
-            for (int k=0; k<ncZvec(j) ; k++)      
-            { 
-               quadTerm = ((muqUtilde(k,j)*muqUtilde(k,j)) + sigsqqUtilde(k,j))*wZmat(k,j);
-               omega19 = quadTerm - 2*muqUtilde(k,j)*omega18(k);
-               etaCurr = muqlogitrhoUj - 0.5*muqrecipSigsqEps*omega19;
-               muqgammaU(k,j) = 1.0/(1.0 + exp(-etaCurr));
-            }   
+            omega19 = quadTerm - 2.0*sum(muqUtilde.rows(0,Kminus1(j)).col(j)%omega18); 
+            etaCurr = logitU - 0.5*muqrecipSigsqEps*omega19;
+            muqgammaU(j) = 1.0/(1.0 + exp(-etaCurr));
          }
       }      
 
       /* Update the q(sigsq_epsilon) parameters and Albert-Chib auxiliary variable parameters: */
 
-      omega20 = muqBetaZero*arma::ones(n) + X*(muqgammaBeta%muqBetaTilde);
+      omega20 = muqBeta0*arma::ones(n) + X*(muqgammaBeta%muqBetaTilde);
       if (dGeneral>0)
       {
          for (int j=0; j<dGeneral ; j++)
          {
             Zj = Z.cols(ZsttInds(j),ZendInds(j));
-            omega20 = omega20 + Zj*(muqgammaU.col(j).rows(0,Kminus1(j))
-                                    %muqUtilde.col(j).rows(0,Kminus1(j)));
+            omega20 = omega20 + muqgammaU(j)*(Zj*muqUtilde.col(j).rows(0,Kminus1(j)));
          }
       }         
 
@@ -341,7 +330,7 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
          trMat = 0.5*XTX*innerMat;
             
          lambdaqSigsqEps = muqrecipaEps + 0.5*sum((y - omega20)%(y - omega20));
-         lambdaqSigsqEps = lambdaqSigsqEps + 0.5*n*sigsqqBetaZero;
+         lambdaqSigsqEps = lambdaqSigsqEps + 0.5*n*sigsqqBeta0;
 
          for (int j=0; j<ncX ; j++)
             lambdaqSigsqEps = lambdaqSigsqEps + trMat(j,j);
@@ -350,9 +339,9 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
          {
             for (int j=0;j<dGeneral;j++)
             {
-               muGammauFac = muqgammaU.col(j)%(1.0-muqgammaU.col(j));
-               innVec = (muqgammaU.col(j)%sigsqqUtilde.col(j)
-                        + muGammauFac%(muqUtilde.col(j)%muqUtilde.col(j)));
+               muGammauFac = muqgammaU(j)*(1.0-muqgammaU(j));
+               innVec = (muqgammaU(j)*sigsqqUtilde.col(j)
+                        + muGammauFac*(muqUtilde.col(j)%muqUtilde.col(j)));
                lambdaqSigsqEps = lambdaqSigsqEps + 0.5*sum(innVec%wZmat.col(j)); 
             }
          }
@@ -381,13 +370,13 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
 
       /* Compute and store the current value of the approximate marginal log-likelihood: */
 
-      logMargLik(itNum-1) = approxLogML(muqBetaZero,sigsqqBetaZero,muqgammaBeta,AqrhoBeta,BqrhoBeta, 
+      logMargLik(itNum-1) = approxLogML(muqBeta0,sigsqqBeta0,logitBeta,muqgammaBeta,
                                         muqrecipSigsqBeta,muqbBeta,muqBetaTilde,SigmaqBetaTilde, 
-                                        muqrecipaBeta,lambdaqSigsqBeta,sBetaHYP,lambdaqaBeta,muqgammaU, 
-                                        AqrhoU,BqrhoU,muqrecipSigsqU,muqbU,muqUtilde,sigsqqUtilde,
+                                        muqrecipaBeta,lambdaqSigsqBeta,sBetaHYP,lambdaqaBeta,logitU,
+                                        muqgammaU,muqrecipSigsqU,muqbU,muqUtilde,sigsqqUtilde,
                                         muqrecipaU,lambdaqSigsqU,sUHYP,lambdaqaU,muqrecipaEps,
                                         muqrecipSigsqEps,lambdaqaEps,lambdaqSigsqEps,sEpsHYP,n,ncZvec,
-                                        familyNum,ySign,omega20);
+                                        familyNum,ySign,omega20);  
 
       /* Check for convergence: */
    
@@ -396,7 +385,7 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
          converged = TRUE;
          stopType = 1;
       }
-      
+
       if (itNum>2)
       {
          relErr = fabs((logMargLik(itNum-1)/logMargLik(itNum-2)) - 1.0); 
@@ -406,25 +395,21 @@ List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum, a
             stopType = 0;
             numIters = itNum;
          }
-      }
+      } 
    } 
    if (msgCode>0) {Rcout << "\n";};
   
    /* Return list of q-density parameters: */
 
-   List MFVBresults = List::create(Named("muqBetaZero",muqBetaZero),
-                                   Named("sigsqqBetaZero",sigsqqBetaZero),
+   List MFVBresults = List::create(Named("muqBetaZero",muqBeta0),
+                                   Named("sigsqqBetaZero",sigsqqBeta0),
                                    Named("muqBetaTilde",muqBetaTilde),
                                    Named("SigmaqBetaTilde",SigmaqBetaTilde),
                                    Named("muqgammaBeta",muqgammaBeta),
                                    Named("kappaqSigsqBeta",kappaqSigsqBeta),
                                    Named("lambdaqSigsqBeta",lambdaqSigsqBeta),
-                                   Named("AqrhoBeta",AqrhoBeta),
-                                   Named("BqrhoBeta",BqrhoBeta),
                                    Named("muqUtilde",muqUtilde),
                                    Named("sigsqqUtilde",sigsqqUtilde),
-                                   Named("AqrhoU",AqrhoU),
-                                   Named("BqrhoU",BqrhoU),
                                    Named("muqgammaU",muqgammaU),
                                    Named("kappaqSigsqEps",kappaqSigsqEps),
                                    Named("lambdaqSigsqEps",lambdaqSigsqEps),

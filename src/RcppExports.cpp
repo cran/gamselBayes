@@ -12,16 +12,15 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // approxLogML
-double approxLogML(double muqBetaZero, double sigsqqBeta0, arma::vec muqgammaBeta, double AqrhoBeta, double BqrhoBeta, double muqrecipSigsqBeta, arma::vec muqbBeta, arma::vec muqBetaTilde, arma::mat SigmaqBetaTilde, double muqrecipaBeta, double lambdaqSigsqBeta, double sBetaHYP, double lambdaqaBeta, arma::mat muqgammaU, arma::vec AqrhoU, arma::vec BqrhoU, arma::vec muqrecipSigsqU, arma::vec muqbU, arma::mat muqUtilde, arma::mat sigsqqUtilde, arma::vec muqrecipaU, arma::vec lambdaqSigsqU, double sUHYP, arma::vec lambdaqaU, double muqrecipaEps, double muqrecipSigsqEps, double lambdaqaEps, double lambdaqSigsqEps, double sEpsHYP, int n, arma::uvec ncZvec, int familyNum, arma::vec ySign, arma::vec omega20);
-RcppExport SEXP _gamselBayes_approxLogML(SEXP muqBetaZeroSEXP, SEXP sigsqqBeta0SEXP, SEXP muqgammaBetaSEXP, SEXP AqrhoBetaSEXP, SEXP BqrhoBetaSEXP, SEXP muqrecipSigsqBetaSEXP, SEXP muqbBetaSEXP, SEXP muqBetaTildeSEXP, SEXP SigmaqBetaTildeSEXP, SEXP muqrecipaBetaSEXP, SEXP lambdaqSigsqBetaSEXP, SEXP sBetaHYPSEXP, SEXP lambdaqaBetaSEXP, SEXP muqgammaUSEXP, SEXP AqrhoUSEXP, SEXP BqrhoUSEXP, SEXP muqrecipSigsqUSEXP, SEXP muqbUSEXP, SEXP muqUtildeSEXP, SEXP sigsqqUtildeSEXP, SEXP muqrecipaUSEXP, SEXP lambdaqSigsqUSEXP, SEXP sUHYPSEXP, SEXP lambdaqaUSEXP, SEXP muqrecipaEpsSEXP, SEXP muqrecipSigsqEpsSEXP, SEXP lambdaqaEpsSEXP, SEXP lambdaqSigsqEpsSEXP, SEXP sEpsHYPSEXP, SEXP nSEXP, SEXP ncZvecSEXP, SEXP familyNumSEXP, SEXP ySignSEXP, SEXP omega20SEXP) {
+double approxLogML(double muqBeta0, double sigsqqBeta0, double logitBeta, arma::vec muqgammaBeta, double muqrecipSigsqBeta, arma::vec muqbBeta, arma::vec muqBetaTilde, arma::mat SigmaqBetaTilde, double muqrecipaBeta, double lambdaqSigsqBeta, double sBetaHYP, double lambdaqaBeta, double logitU, arma::vec muqgammaU, arma::vec muqrecipSigsqU, arma::vec muqbU, arma::mat muqUtilde, arma::mat sigsqqUtilde, arma::vec muqrecipaU, arma::vec lambdaqSigsqU, double sUHYP, arma::vec lambdaqaU, double muqrecipaEps, double muqrecipSigsqEps, double lambdaqaEps, double lambdaqSigsqEps, double sEpsHYP, int n, arma::uvec ncZvec, int familyNum, arma::vec ySign, arma::vec omega20);
+RcppExport SEXP _gamselBayes_approxLogML(SEXP muqBeta0SEXP, SEXP sigsqqBeta0SEXP, SEXP logitBetaSEXP, SEXP muqgammaBetaSEXP, SEXP muqrecipSigsqBetaSEXP, SEXP muqbBetaSEXP, SEXP muqBetaTildeSEXP, SEXP SigmaqBetaTildeSEXP, SEXP muqrecipaBetaSEXP, SEXP lambdaqSigsqBetaSEXP, SEXP sBetaHYPSEXP, SEXP lambdaqaBetaSEXP, SEXP logitUSEXP, SEXP muqgammaUSEXP, SEXP muqrecipSigsqUSEXP, SEXP muqbUSEXP, SEXP muqUtildeSEXP, SEXP sigsqqUtildeSEXP, SEXP muqrecipaUSEXP, SEXP lambdaqSigsqUSEXP, SEXP sUHYPSEXP, SEXP lambdaqaUSEXP, SEXP muqrecipaEpsSEXP, SEXP muqrecipSigsqEpsSEXP, SEXP lambdaqaEpsSEXP, SEXP lambdaqSigsqEpsSEXP, SEXP sEpsHYPSEXP, SEXP nSEXP, SEXP ncZvecSEXP, SEXP familyNumSEXP, SEXP ySignSEXP, SEXP omega20SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type muqBetaZero(muqBetaZeroSEXP);
+    Rcpp::traits::input_parameter< double >::type muqBeta0(muqBeta0SEXP);
     Rcpp::traits::input_parameter< double >::type sigsqqBeta0(sigsqqBeta0SEXP);
+    Rcpp::traits::input_parameter< double >::type logitBeta(logitBetaSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type muqgammaBeta(muqgammaBetaSEXP);
-    Rcpp::traits::input_parameter< double >::type AqrhoBeta(AqrhoBetaSEXP);
-    Rcpp::traits::input_parameter< double >::type BqrhoBeta(BqrhoBetaSEXP);
     Rcpp::traits::input_parameter< double >::type muqrecipSigsqBeta(muqrecipSigsqBetaSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type muqbBeta(muqbBetaSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type muqBetaTilde(muqBetaTildeSEXP);
@@ -30,9 +29,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type lambdaqSigsqBeta(lambdaqSigsqBetaSEXP);
     Rcpp::traits::input_parameter< double >::type sBetaHYP(sBetaHYPSEXP);
     Rcpp::traits::input_parameter< double >::type lambdaqaBeta(lambdaqaBetaSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type muqgammaU(muqgammaUSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type AqrhoU(AqrhoUSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type BqrhoU(BqrhoUSEXP);
+    Rcpp::traits::input_parameter< double >::type logitU(logitUSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type muqgammaU(muqgammaUSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type muqrecipSigsqU(muqrecipSigsqUSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type muqbU(muqbUSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type muqUtilde(muqUtildeSEXP);
@@ -51,7 +49,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type familyNum(familyNumSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type ySign(ySignSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type omega20(omega20SEXP);
-    rcpp_result_gen = Rcpp::wrap(approxLogML(muqBetaZero, sigsqqBeta0, muqgammaBeta, AqrhoBeta, BqrhoBeta, muqrecipSigsqBeta, muqbBeta, muqBetaTilde, SigmaqBetaTilde, muqrecipaBeta, lambdaqSigsqBeta, sBetaHYP, lambdaqaBeta, muqgammaU, AqrhoU, BqrhoU, muqrecipSigsqU, muqbU, muqUtilde, sigsqqUtilde, muqrecipaU, lambdaqSigsqU, sUHYP, lambdaqaU, muqrecipaEps, muqrecipSigsqEps, lambdaqaEps, lambdaqSigsqEps, sEpsHYP, n, ncZvec, familyNum, ySign, omega20));
+    rcpp_result_gen = Rcpp::wrap(approxLogML(muqBeta0, sigsqqBeta0, logitBeta, muqgammaBeta, muqrecipSigsqBeta, muqbBeta, muqBetaTilde, SigmaqBetaTilde, muqrecipaBeta, lambdaqSigsqBeta, sBetaHYP, lambdaqaBeta, logitU, muqgammaU, muqrecipSigsqU, muqbU, muqUtilde, sigsqqUtilde, muqrecipaU, lambdaqSigsqU, sUHYP, lambdaqaU, muqrecipaEps, muqrecipSigsqEps, lambdaqaEps, lambdaqSigsqEps, sEpsHYP, n, ncZvec, familyNum, ySign, omega20));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -67,8 +65,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // gamselBayesMCMCinner
-List gamselBayesMCMCinner(arma::vec y, arma::mat X, arma::mat Z, int familyNum, arma::uvec ncZvec, int ncZmax, int dGeneral, arma::uvec ZsttInds, arma::uvec ZendInds, arma::vec XTy, arma::mat XTX, arma::vec ZTy, arma::mat ZTX, arma::mat ZTZ, double sigmaBeta0HYP, double sepsHYP, double sbetaHYP, double suHYP, double AbetaHYP, double BbetaHYP, double AuHYP, double BuHYP, int numMCMC, int msgCode);
-RcppExport SEXP _gamselBayes_gamselBayesMCMCinner(SEXP ySEXP, SEXP XSEXP, SEXP ZSEXP, SEXP familyNumSEXP, SEXP ncZvecSEXP, SEXP ncZmaxSEXP, SEXP dGeneralSEXP, SEXP ZsttIndsSEXP, SEXP ZendIndsSEXP, SEXP XTySEXP, SEXP XTXSEXP, SEXP ZTySEXP, SEXP ZTXSEXP, SEXP ZTZSEXP, SEXP sigmaBeta0HYPSEXP, SEXP sepsHYPSEXP, SEXP sbetaHYPSEXP, SEXP suHYPSEXP, SEXP AbetaHYPSEXP, SEXP BbetaHYPSEXP, SEXP AuHYPSEXP, SEXP BuHYPSEXP, SEXP numMCMCSEXP, SEXP msgCodeSEXP) {
+List gamselBayesMCMCinner(arma::vec y, arma::mat X, arma::mat Z, int familyNum, arma::uvec ncZvec, int ncZmax, int dGeneral, arma::uvec ZsttInds, arma::uvec ZendInds, arma::vec XTy, arma::mat XTX, arma::vec ZTy, arma::mat ZTX, arma::mat ZTZ, double sigmaBeta0HYP, double sepsHYP, double sbetaHYP, double suHYP, double rhoBetaHYP, double rhoUHYP, int numMCMC, int msgCode);
+RcppExport SEXP _gamselBayes_gamselBayesMCMCinner(SEXP ySEXP, SEXP XSEXP, SEXP ZSEXP, SEXP familyNumSEXP, SEXP ncZvecSEXP, SEXP ncZmaxSEXP, SEXP dGeneralSEXP, SEXP ZsttIndsSEXP, SEXP ZendIndsSEXP, SEXP XTySEXP, SEXP XTXSEXP, SEXP ZTySEXP, SEXP ZTXSEXP, SEXP ZTZSEXP, SEXP sigmaBeta0HYPSEXP, SEXP sepsHYPSEXP, SEXP sbetaHYPSEXP, SEXP suHYPSEXP, SEXP rhoBetaHYPSEXP, SEXP rhoUHYPSEXP, SEXP numMCMCSEXP, SEXP msgCodeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -90,19 +88,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type sepsHYP(sepsHYPSEXP);
     Rcpp::traits::input_parameter< double >::type sbetaHYP(sbetaHYPSEXP);
     Rcpp::traits::input_parameter< double >::type suHYP(suHYPSEXP);
-    Rcpp::traits::input_parameter< double >::type AbetaHYP(AbetaHYPSEXP);
-    Rcpp::traits::input_parameter< double >::type BbetaHYP(BbetaHYPSEXP);
-    Rcpp::traits::input_parameter< double >::type AuHYP(AuHYPSEXP);
-    Rcpp::traits::input_parameter< double >::type BuHYP(BuHYPSEXP);
+    Rcpp::traits::input_parameter< double >::type rhoBetaHYP(rhoBetaHYPSEXP);
+    Rcpp::traits::input_parameter< double >::type rhoUHYP(rhoUHYPSEXP);
     Rcpp::traits::input_parameter< int >::type numMCMC(numMCMCSEXP);
     Rcpp::traits::input_parameter< int >::type msgCode(msgCodeSEXP);
-    rcpp_result_gen = Rcpp::wrap(gamselBayesMCMCinner(y, X, Z, familyNum, ncZvec, ncZmax, dGeneral, ZsttInds, ZendInds, XTy, XTX, ZTy, ZTX, ZTZ, sigmaBeta0HYP, sepsHYP, sbetaHYP, suHYP, AbetaHYP, BbetaHYP, AuHYP, BuHYP, numMCMC, msgCode));
+    rcpp_result_gen = Rcpp::wrap(gamselBayesMCMCinner(y, X, Z, familyNum, ncZvec, ncZmax, dGeneral, ZsttInds, ZendInds, XTy, XTX, ZTy, ZTX, ZTZ, sigmaBeta0HYP, sepsHYP, sbetaHYP, suHYP, rhoBetaHYP, rhoUHYP, numMCMC, msgCode));
     return rcpp_result_gen;
 END_RCPP
 }
 // gamselBayesMFVBinner
-List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z, int familyNum, arma::uvec ncZvec, int ncZmax, int dGeneral, arma::uvec ZsttInds, arma::uvec ZendInds, arma::vec XTy, arma::mat XTX, arma::vec ZTy, arma::mat ZTX, arma::mat ZTZ, double sigmaBeta0HYP, double sEpsHYP, double sBetaHYP, double sUHYP, double AbetaHYP, double BbetaHYP, double AuHYP, double BuHYP, int maxIter, double toler, int msgCode);
-RcppExport SEXP _gamselBayes_gamselBayesMFVBinner(SEXP ySEXP, SEXP XSEXP, SEXP ZSEXP, SEXP familyNumSEXP, SEXP ncZvecSEXP, SEXP ncZmaxSEXP, SEXP dGeneralSEXP, SEXP ZsttIndsSEXP, SEXP ZendIndsSEXP, SEXP XTySEXP, SEXP XTXSEXP, SEXP ZTySEXP, SEXP ZTXSEXP, SEXP ZTZSEXP, SEXP sigmaBeta0HYPSEXP, SEXP sEpsHYPSEXP, SEXP sBetaHYPSEXP, SEXP sUHYPSEXP, SEXP AbetaHYPSEXP, SEXP BbetaHYPSEXP, SEXP AuHYPSEXP, SEXP BuHYPSEXP, SEXP maxIterSEXP, SEXP tolerSEXP, SEXP msgCodeSEXP) {
+List gamselBayesMFVBinner(arma::vec y, arma::mat X, arma::mat Z, int familyNum, arma::uvec ncZvec, int ncZmax, int dGeneral, arma::uvec ZsttInds, arma::uvec ZendInds, arma::vec XTy, arma::mat XTX, arma::vec ZTy, arma::mat ZTX, arma::mat ZTZ, double sigmaBeta0HYP, double sEpsHYP, double sBetaHYP, double sUHYP, double rhoBetaHYP, double rhoUHYP, int maxIter, double toler, int msgCode);
+RcppExport SEXP _gamselBayes_gamselBayesMFVBinner(SEXP ySEXP, SEXP XSEXP, SEXP ZSEXP, SEXP familyNumSEXP, SEXP ncZvecSEXP, SEXP ncZmaxSEXP, SEXP dGeneralSEXP, SEXP ZsttIndsSEXP, SEXP ZendIndsSEXP, SEXP XTySEXP, SEXP XTXSEXP, SEXP ZTySEXP, SEXP ZTXSEXP, SEXP ZTZSEXP, SEXP sigmaBeta0HYPSEXP, SEXP sEpsHYPSEXP, SEXP sBetaHYPSEXP, SEXP sUHYPSEXP, SEXP rhoBetaHYPSEXP, SEXP rhoUHYPSEXP, SEXP maxIterSEXP, SEXP tolerSEXP, SEXP msgCodeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -124,14 +120,12 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type sEpsHYP(sEpsHYPSEXP);
     Rcpp::traits::input_parameter< double >::type sBetaHYP(sBetaHYPSEXP);
     Rcpp::traits::input_parameter< double >::type sUHYP(sUHYPSEXP);
-    Rcpp::traits::input_parameter< double >::type AbetaHYP(AbetaHYPSEXP);
-    Rcpp::traits::input_parameter< double >::type BbetaHYP(BbetaHYPSEXP);
-    Rcpp::traits::input_parameter< double >::type AuHYP(AuHYPSEXP);
-    Rcpp::traits::input_parameter< double >::type BuHYP(BuHYPSEXP);
+    Rcpp::traits::input_parameter< double >::type rhoBetaHYP(rhoBetaHYPSEXP);
+    Rcpp::traits::input_parameter< double >::type rhoUHYP(rhoUHYPSEXP);
     Rcpp::traits::input_parameter< int >::type maxIter(maxIterSEXP);
     Rcpp::traits::input_parameter< double >::type toler(tolerSEXP);
     Rcpp::traits::input_parameter< int >::type msgCode(msgCodeSEXP);
-    rcpp_result_gen = Rcpp::wrap(gamselBayesMFVBinner(y, X, Z, familyNum, ncZvec, ncZmax, dGeneral, ZsttInds, ZendInds, XTy, XTX, ZTy, ZTX, ZTZ, sigmaBeta0HYP, sEpsHYP, sBetaHYP, sUHYP, AbetaHYP, BbetaHYP, AuHYP, BuHYP, maxIter, toler, msgCode));
+    rcpp_result_gen = Rcpp::wrap(gamselBayesMFVBinner(y, X, Z, familyNum, ncZvec, ncZmax, dGeneral, ZsttInds, ZendInds, XTy, XTX, ZTy, ZTX, ZTZ, sigmaBeta0HYP, sEpsHYP, sBetaHYP, sUHYP, rhoBetaHYP, rhoUHYP, maxIter, toler, msgCode));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -208,10 +202,10 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_gamselBayes_approxLogML", (DL_FUNC) &_gamselBayes_approxLogML, 34},
+    {"_gamselBayes_approxLogML", (DL_FUNC) &_gamselBayes_approxLogML, 32},
     {"_gamselBayes_drawInvGaussVec", (DL_FUNC) &_gamselBayes_drawInvGaussVec, 1},
-    {"_gamselBayes_gamselBayesMCMCinner", (DL_FUNC) &_gamselBayes_gamselBayesMCMCinner, 24},
-    {"_gamselBayes_gamselBayesMFVBinner", (DL_FUNC) &_gamselBayes_gamselBayesMFVBinner, 25},
+    {"_gamselBayes_gamselBayesMCMCinner", (DL_FUNC) &_gamselBayes_gamselBayesMCMCinner, 22},
+    {"_gamselBayes_gamselBayesMFVBinner", (DL_FUNC) &_gamselBayes_gamselBayesMFVBinner, 23},
     {"_gamselBayes_logPhi", (DL_FUNC) &_gamselBayes_logPhi, 1},
     {"_gamselBayes_omitMatCol", (DL_FUNC) &_gamselBayes_omitMatCol, 2},
     {"_gamselBayes_omitVecEnt", (DL_FUNC) &_gamselBayes_omitVecEnt, 2},

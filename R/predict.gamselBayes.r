@@ -3,7 +3,7 @@
 # For prediction based on new data from a gamselBayes() 
 # fit object.
 
-# Last changed: 11 APR 2023
+# Last changed: 04 AUG 2023
 
 predict.gamselBayes <- function(object,newdata,type="response",...)
 {
@@ -119,7 +119,7 @@ predict.gamselBayes <- function(object,newdata,type="response",...)
       OStoDRmatList <- fitObject$OStoDRmat
       truncateBasis <- fitObject$truncateBasis
       numBasis <- fitObject$numBasis
-
+       
       for (jNonlin in 1:numNonlinSelected)
       {
          # Initialise the current term for the full data:
@@ -178,7 +178,7 @@ predict.gamselBayes <- function(object,newdata,type="response",...)
             # Extract and obtain required coefficients:
 
             uTildeMCMCcurr <- fitObject$MCMC$uTilde[[indsEstNonlinEff[jNonlin]-dLinear]]
-            gammaUMCMCcurr <- fitObject$MCMC$gammaU[[indsEstNonlinEff[jNonlin]-dLinear]]
+            gammaUMCMCcurr <- fitObject$MCMC$gammaU[,indsEstNonlinEff[jNonlin]-dLinear]
             uMCMCcurr <- gammaUMCMCcurr*uTildeMCMCcurr
 
             # Obtain the estimated component over the full data:
@@ -195,7 +195,7 @@ predict.gamselBayes <- function(object,newdata,type="response",...)
            # Extract and obtain required coefficients:
 
             mu.q.uTildeCurr <- fitObject$MFVB$uTilde[[1]][[indsEstNonlinEff[jNonlin]-dLinear]]
-            mu.q.gammaCurr <- fitObject$MFVB$gammaU[[indsEstNonlinEff[jNonlin]-dLinear]]
+            mu.q.gammaCurr <- fitObject$MFVB$gammaU[indsEstNonlinEff[jNonlin]-dLinear]
             mu.q.uCurr <- mu.q.gammaCurr*mu.q.uTildeCurr
              
             # Obtain the estimated component over the full data:

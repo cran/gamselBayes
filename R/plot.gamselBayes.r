@@ -2,7 +2,7 @@
 
 # For plotting a gamselBayes() fit object.
 
-# Last changed: 19 JAN 2022
+# Last changed: 31 JUL 2023
 
 plot.gamselBayes <- function(x,credLev=0.95,gridSize=251,nMC=5000,varBand=TRUE,shade=TRUE,
                              yscale="response",rug=TRUE,rugSampSize=NULL,estCol="darkgreen",
@@ -270,9 +270,9 @@ plot.gamselBayes <- function(x,credLev=0.95,gridSize=251,nMC=5000,varBand=TRUE,s
 
          if (method=="MCMC")
          {
-            # Obtain the u MCC sample for the "j"th panel:
+            # Obtain the u MCMC sample for the "j"th panel:
 
-            uMCcurr <- gammaUMCMC[[jIndUcurr]]*uTildeMCMC[[jIndUcurr]]
+            uMCcurr <- gammaUMCMC[,jIndUcurr]*uTildeMCMC[[jIndUcurr]]
          }  
          if (method=="MFVB")
          {
@@ -281,7 +281,7 @@ plot.gamselBayes <- function(x,credLev=0.95,gridSize=251,nMC=5000,varBand=TRUE,s
             tmpMat <- NULL
             for (k in 1:length(mu.q.uTilde[[jIndUcurr]]))
                tmpMat <- cbind(tmpMat,rNormalZero(nMC,mu.q.uTilde[[jIndUcurr]][k],
-                                  sqrt(sigsq.q.uTilde[[jIndUcurr]][k]),mu.q.gamma.u[[jIndUcurr]][k]))
+                                  sqrt(sigsq.q.uTilde[[jIndUcurr]][k]),mu.q.gamma.u[jIndUcurr]))
             uMCcurr <- tmpMat
          } 
 

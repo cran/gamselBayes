@@ -3,7 +3,7 @@
 # For opening up the vignette PDF file for
 # the gamselBayes package.
 
-# Last changed: 08 JUL 2020
+# Last changed: 04 AUG 2023
 
 gamselBayesVignette <- function()
 {

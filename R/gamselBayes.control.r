@@ -2,12 +2,11 @@
 
 # Control function for gamselBayes().
 
-# Last changed: 18 OCT 2021
+# Last changed: 03 AUG 2023
 
-gamselBayes.control <- function(numIntKnots=25,truncateBasis=TRUE,numBasis=12,effectiveZero=0.00001,
-                                sigmabeta0=100000,sbeta=1000,sepsilon=1000,su=1000,Abeta=1,Bbeta=1,
-                                Au=1,Bu=1,nWarm=1000,nKept=1000,nThin=1,maxIter=1000,toler=1e-8,
-                                msgCode=1)
+gamselBayes.control <- function(numIntKnots=25,truncateBasis=TRUE,numBasis=12,
+                                sigmabeta0=100000,sbeta=1000,sepsilon=1000,su=1000,rhoBeta=0.5,rhoU=0.5,
+                                nWarm=1000,nKept=1000,nThin=1,maxIter=1000,toler=1e-8,msgCode=1)
 {
    # Make sure that numIntKnots is legal:
 
@@ -51,24 +50,6 @@ gamselBayes.control <- function(numIntKnots=25,truncateBasis=TRUE,numBasis=12,ef
       numBasis <- 12
    }
 
-   # Make sure that effectiveZero is legal:
-  
-   if (effectiveZero<0)
-   {
-      warnStr1 <- "The inputted effective zero value is non-positive."
-      warnStr2 <- "The default value of 0.00001 was used instead."
-      warning(paste(warnStr1,"\n",warnStr2,"\n",sep=""),immediate.=TRUE)
-      effectiveZero <- 0.00001
-   }
-
-   if (effectiveZero>0.01)
-   {
-      warnStr1 <- "The inputted effective zero value is too high."
-      warnStr2 <- "The default value of 0.00001 was used instead."
-      warning(paste(warnStr1,"\n",warnStr2,"\n",sep=""),immediate.=TRUE)
-      effectiveZero <- 0.00001
-   }
-
    # Make sure that sigmabeta0 is legal:
   
    if (sigmabeta0<=0)
@@ -109,44 +90,24 @@ gamselBayes.control <- function(numIntKnots=25,truncateBasis=TRUE,numBasis=12,ef
       su <- 1000
    }
 
-   # Make sure that Abeta is legal:
+   # Make sure that rhoBeta is legal:
   
-   if (Abeta<0)
+   if ((rhoBeta<=0)|(rhoBeta>=1))
    {
-      warnStr1 <- "The inputted A_beta shape hyperparameter is non-positive."
-      warnStr2 <- "The default value of 1 was used instead."
+      warnStr1 <- "The inputted rho_beta probability hyperparameter is outside (0,1)."
+      warnStr2 <- "The default value of 0.5 was used instead."
       warning(paste(warnStr1,"\n",warnStr2,"\n",sep=""),immediate.=TRUE)
-      Abeta <- 1
+      rhoBeta <- 0.5
    }
 
-   # Make sure that Bbeta is legal:
+   # Make sure that rhoU is legal:
   
-   if (Bbeta<0)
+   if ((rhoU<=0)|(rhoU>=1))
    {
-      warnStr1 <- "The inputted B_beta shape hyperparameter is non-positive."
-      warnStr2 <- "The default value of 1 was used instead."
+      warnStr1 <- "The inputted rho_U probability hyperparameter is outside (0,1)."
+      warnStr2 <- "The default value of 0.5 was used instead."
       warning(paste(warnStr1,"\n",warnStr2,"\n",sep=""),immediate.=TRUE)
-      Bbeta <- 1
-   }
-
-   # Make sure that Au is legal:
-  
-   if (Au<0)
-   {
-      warnStr1 <- "The inputted A_u shape hyperparameter is non-positive."
-      warnStr2 <- "The default value of 1 was used instead."
-      warning(paste(warnStr1,"\n",warnStr2,"\n",sep=""),immediate.=TRUE)
-      Au <- 1
-   }
-
-   # Make sure that Bu is legal:
-  
-   if (Bu<0)
-   {
-      warnStr1 <- "The inputted B_u shape hyperparameter is non-positive."
-      warnStr2 <- "The default value of 1 was used instead."
-      warning(paste(warnStr1,"\n",warnStr2,"\n",sep=""),immediate.=TRUE)
-      Bu <- 1
+      rhoU <- 0.5
    }
 
    if (!is.null(nWarm))
@@ -239,8 +200,8 @@ gamselBayes.control <- function(numIntKnots=25,truncateBasis=TRUE,numBasis=12,ef
    }
 
    return(list(numIntKnots=numIntKnots,truncateBasis=truncateBasis,numBasis=numBasis,
-               effectiveZero=effectiveZero,sigmabeta0=sigmabeta0,sbeta=sbeta,sepsilon=sepsilon,
-               su=su,Abeta=Abeta,Bbeta=Bbeta,Au=Au,Bu=Bu,nWarm=nWarm,nKept=nKept,nThin=nThin,
+               sigmabeta0=sigmabeta0,sbeta=sbeta,sepsilon=sepsilon,
+               su=su,rhoBeta=rhoBeta,rhoU=rhoU,nWarm=nWarm,nKept=nKept,nThin=nThin,
                maxIter=maxIter,toler=toler,msgCode=msgCode))
 }
 

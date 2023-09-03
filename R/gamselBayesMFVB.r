@@ -4,7 +4,7 @@
 # iterations for fitting and inference for the 
 # Bayesian gamsel-type model.
 
-# Last changed: 09 FEB 2022
+# Last changed: 22 AUG 2023
 
 gamselBayesMFVB <- function(y,X,Z,ncZvec,family,XTy,XTX,ZTy,ZTX,ZTZ,hyperPars,
                             maxIter,toler,msgCode)
@@ -15,10 +15,8 @@ gamselBayesMFVB <- function(y,X,Z,ncZvec,family,XTy,XTX,ZTy,ZTX,ZTZ,hyperPars,
    sepsHYP <- hyperPars[2]
    sbetaHYP <- hyperPars[3]
    suHYP <- hyperPars[4]
-   AbetaHYP <- hyperPars[5]
-   BbetaHYP <- hyperPars[6]
-   AuHYP <- hyperPars[7]
-   BuHYP <- hyperPars[8]
+   rhoBetaHYP <- hyperPars[5]
+   rhoUHYP <- hyperPars[6]
 
    # Set dimension  variables:
 
@@ -55,8 +53,7 @@ gamselBayesMFVB <- function(y,X,Z,ncZvec,family,XTy,XTX,ZTy,ZTX,ZTZ,hyperPars,
    innerObj <- gamselBayesMFVBinner(y,X,Z,familyNum,ncZvec,ncZmax,dGeneral,
                                     ZsttInds,ZendInds,XTy,XTX,ZTy,ZTX,ZTZ,
                                     sigmaBeta0HYP,sepsHYP,sbetaHYP,suHYP,
-                                    AbetaHYP,BbetaHYP,AuHYP,BuHYP,maxIter,
-                                    toler,msgCode) 
+                                    rhoBetaHYP,rhoUHYP,maxIter,toler,msgCode) 
 
    # Extract q-density parameters:
 
@@ -67,8 +64,6 @@ gamselBayesMFVB <- function(y,X,Z,ncZvec,family,XTy,XTX,ZTy,ZTX,ZTZ,hyperPars,
    mu.q.gamma.beta <- as.vector(innerObj$muqgammaBeta)
    kappa.q.sigsq.beta <- innerObj$kappaqSigsqBeta 
    lambda.q.sigsq.beta <- innerObj$lambdaqSigsqBeta 
-   A.q.rho.beta <- innerObj$AqrhoBeta
-   B.q.rho.beta <- innerObj$BqrhoBeta
    kappa.q.sigsq.eps <- innerObj$kappaqSigsqEps 
    lambda.q.sigsq.eps <- innerObj$lambdaqSigsqEps 
    logMargLik <- as.vector(innerObj$logMargLik)
@@ -106,41 +101,31 @@ gamselBayesMFVB <- function(y,X,Z,ncZvec,family,XTy,XTX,ZTy,ZTX,ZTZ,hyperPars,
    
    if (dGeneral>0)
    {
-      muqgammaU  <- innerObj$muqgammaU
+      mu.q.gamma.u <- as.vector(innerObj$muqgammaU)
       muqUtilde <- innerObj$muqUtilde
       sigsqqUtilde <- innerObj$sigsqqUtilde
-      mu.q.gamma.u <- vector("list",dGeneral)
       mu.q.uTilde <- vector("list",dGeneral)
       sigsq.q.uTilde <- vector("list",dGeneral)
-   
       for (j in 1:dGeneral)
       {
-         mu.q.gamma.u[[j]] <- muqgammaU[,j]
          mu.q.uTilde[[j]] <- muqUtilde[,j]
          sigsq.q.uTilde[[j]] <- sigsqqUtilde[,j]
       }
-      
-      A.q.rho.u <- as.vector(innerObj$AqrhoU)
-      B.q.rho.u <- as.vector(innerObj$BqrhoU)
    }
 
    if (dGeneral==0)
    {
-      muqgammaU  <- NULL
       sigsq.q.uTilde <- NULL
       mu.q.gamma.u <- NULL
       mu.q.uTilde <- NULL
-      A.q.rho.u <- NULL
-      B.q.rho.u <- NULL
    }
 
    return(list(beta0=c(mu.q.beta.0=mu.q.beta.0,sigsq.q.beta.0=sigsq.q.beta.0),
                betaTilde=list(mu.q.betaTilde=mu.q.betaTilde,Sigma.q.betaTilde=Sigma.q.betaTilde),
                gammaBeta=mu.q.gamma.beta,sigmaBeta=c(kappa.q.sigsq.beta,lambda.q.sigsq.beta),
-               rhoBeta=c(A.q.rho.beta,B.q.rho.beta),
                uTilde=list(mu.q.uTilde=mu.q.uTilde,sigsq.q.uTilde=sigsq.q.uTilde),
-               gammaU=mu.q.gamma.u,rhoU=list(A.q.rho.u=A.q.rho.u,B.q.rho.u=B.q.rho.u),
-               sigmaEps=c(kappa.q.sigsq.eps,lambda.q.sigsq.eps),logMargLik=logMargLik))
+               gammaU=mu.q.gamma.u,sigmaEps=c(kappa.q.sigsq.eps,lambda.q.sigsq.eps),
+               logMargLik=logMargLik))
 }
 
 ############ End of gamselBayesMFVB ############

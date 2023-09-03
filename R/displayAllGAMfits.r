@@ -65,6 +65,7 @@ displayAllGAMfits <- function(X,xgList,estgList,lowgList,uppgList,xLabsVec,
  
       if (numPanelsCurr==1) dimVec <- c(1,1)
       if (numPanelsCurr==2) dimVec <- c(1,2)
+
       if (any(numPanelsCurr==(3:4))) dimVec <- c(2,2)
       if (any(numPanelsCurr==(5:6))) dimVec <- c(3,2)
       if (any(numPanelsCurr==(7:9))) dimVec <- c(3,3)

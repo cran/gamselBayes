@@ -2,7 +2,7 @@
 
 # For conducting input processing for the gamselBayes() function:
 
-# Last changed: 08 OCT 2021
+# Last changed: 07 AUG 2023
 
 gBinputProc <- function(y,family,method,lowerMakesSparser)
 {
@@ -38,8 +38,8 @@ gBinputProc <- function(y,family,method,lowerMakesSparser)
 
    if (is.null(lowerMakesSparser))
    {
-      if (method=="MCMC") lowerMakesSparser <- 0.1
-      if (method=="MFVB") lowerMakesSparser <- 0
+      if (method=="MCMC") lowerMakesSparser <- 0.5
+      if (method=="MFVB") lowerMakesSparser <- 0.1
    }
 
    # Make sure that an inputted "lowerMakesSparser" is legal:
@@ -53,8 +53,8 @@ gBinputProc <- function(y,family,method,lowerMakesSparser)
          warnStr3 <- "The default value for the specified method was used instead."
          warning(paste(warnStr1,"\n  ",warnStr2,"\n  ",warnStr3,"\n",sep=""),
                  immediate.=TRUE)
-         if (method=="MCMC") lowerMakesSparser <- 0.1
-         if (method=="MFVB") lowerMakesSparser <- 0
+         if (method=="MCMC") lowerMakesSparser <- 0.5
+         if (method=="MFVB") lowerMakesSparser <- 0.1
       }
    }
 

@@ -3,7 +3,7 @@
 # For updating a gamselBayes() fit object after possible adjustment
 # to parameters controlling effect type estimation.
 
-# Last changed: 07 OCT 2021
+# Last changed: 03 AUG 2023
 
 gamselBayesUpdate <- function(fitObject,lowerMakesSparser=NULL)
 {
@@ -32,7 +32,6 @@ gamselBayesUpdate <- function(fitObject,lowerMakesSparser=NULL)
    method <- fitObject$method
    MCMCobj <- fitObject$MCMC
    MFVBobj <- fitObject$MFVB
-   effectiveZero <- fitObject$effectiveZero
 
    # Estimate the effect type:
  
@@ -45,14 +44,15 @@ gamselBayesUpdate <- function(fitObject,lowerMakesSparser=NULL)
       uTildeMCMC <- MCMCobj$uTilde
       gammaUMCMC <- MCMCobj$gammaU
       betaMCMC <- gammaBetaMCMC*betaTildeMCMC
+
+       
       if (dGeneral>0)
       {
          uMCMC <- vector("list",dGeneral)
          for (j in 1:dGeneral)
-            uMCMC[[j]] <- gammaUMCMC[[j]]*uTildeMCMC[[j]]
+            uMCMC[[j]] <- gammaUMCMC[,j]*uTildeMCMC[[j]]
       }
-      effectTypesHat <- effTypesFromMCMC(betaMCMC,uMCMC,dLinear,lowerMakesSparser,
-                                         effectiveZero)
+      effectTypesHat <- effTypesFromMCMC(gammaBetaMCMC,gammaUMCMC,lowerMakesSparser)
    }
 
    if (method=="MFVB")
@@ -66,16 +66,14 @@ gamselBayesUpdate <- function(fitObject,lowerMakesSparser=NULL)
       sigsq.q.uTilde <- MFVBobj$uTilde$sigsq.q.uTilde
       mu.q.gamma.u <- MFVBobj$gammaU
 
-      effectTypesHat <- effTypesFromMFVB(mu.q.betaTilde,sigsq.q.betaTilde,mu.q.gamma.beta,
-                                         mu.q.uTilde,sigsq.q.uTilde,mu.q.gamma.u,
-                                         lowerMakesSparser,effectiveZero)
+      effectTypesHat <- effTypesFromMFVB(mu.q.gamma.beta,mu.q.gamma.u,lowerMakesSparser)
    }
 
    # Update the "effectTypesHat" component of the fit object:
 
    outObj <- fitObject
    outObj$effectTypesHat <- effectTypesHat
-
+   
    # Return the updated gamseBayes object:
 
    class(outObj) <- "gamselBayes"

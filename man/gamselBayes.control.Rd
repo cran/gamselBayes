@@ -4,9 +4,9 @@
 \description{Function for optional use in calls to \code{gamselBayes()} to control spline basis dimension, hyperparameter choice and other specifications for generalized additive model selection via using Bayesian inference.}
 \usage{
 gamselBayes.control(numIntKnots = 25,truncateBasis = TRUE,numBasis = 12,
-                    effectiveZero = 0.00001,sigmabeta0 = 100000,sbeta = 1000,
-                    sepsilon = 1000,su = 1000,Abeta = 1,Bbeta = 1,Au = 1,Bu = 1,
-                    nWarm = 1000,nKept = 1000,nThin = 1,maxIter = 1000,toler = 1e-8,
+                    sigmabeta0 = 100000,sbeta = 1000,sepsilon = 1000,
+                    su= 1000,rhoBeta = 0.5,rhoU = 0.5,nWarm = 1000,
+                    nKept = 1000,nThin = 1,maxIter = 1000,toler = 1e-8,
                     msgCode = 1)
 }
 \arguments{
@@ -15,15 +15,12 @@ gamselBayes.control(numIntKnots = 25,truncateBasis = TRUE,numBasis = 12,
                 TRUE = truncate the Demmler-Reinsch spline basis to the value specified by \code{numBasis} (the default)\cr
                 FALSE = produce a black-and-white version of the graphical check.}
 \item{numBasis}{The number of spline basis functions retained after truncation when \code{truncateBasis} is \code{TRUE}. The value of \code{numBasis} cannot exceed \code{numIntKnots}+2. The default value of \code{numBasis} is 12.} 
-\item{effectiveZero}{A small positive number such that numbers below it are considered zero, and used in deciding whether or not a coefficient parameter is annihilated based on relevant approximate posterior density parameters. The value of \code{effectiveZero} cannot exceed 0.01. The default value of \code{effectiveZero} is 0.00001.} 
 \item{sigmabeta0}{The standard deviation hyperparameter for the Normal prior distribution on the intercept parameter for the standardized version of the data used in Bayesian inference. The default is 100000.} 
 \item{sbeta}{The standard deviation hyperparameter for the Normal prior distribution on the linear component coefficients parameters for the standardized version of the data used in Bayesian inference. The default is 1000.} 
 \item{sepsilon}{The scale hyperparameter for the Half-Cauchy prior distribution on the error standard deviation parameter for the standardized version of the data used in Bayesian inference. The default is 1000.}
 \item{su}{The scale hyperparameter for the Half-Cauchy prior distribution on the spline basis coefficients standard deviation parameter for the standardized version of the data used in Bayesian inference. The default is 1000.}
-\item{Abeta}{The first shape hyperparameter for the Beta prior distribution on the linear component coefficients spike-and-slab auxiliary indicator variables probability parameter. The default is 1.}
-\item{Bbeta}{The second shape hyperparameter for the Beta prior distribution on the linear component coefficients spike-and-slab auxiliary indicator variables probability parameter. The default is 1.}
-\item{Au}{The first shape hyperparameter for the Beta prior distribution on the spline basis coefficients spike-and-slab auxiliary indicator variables probability parameter. The default is 1.}
-\item{Bu}{The second shape hyperparameter for the Beta prior distribution on the spline basis coefficients spike-and-slab auxiliary indicator variables probability parameter. The default is 1.}
+\item{rhoBeta}{The probability parameter for the Bernoulli prior distribution on the linear component coefficients spike-and-slab auxiliary indicator variables probability parameter. The default is 0.5.}
+\item{rhoU}{The probability parameter for the Bernoulli prior distribution on the spline basis coefficients spike-and-slab auxiliary indicator variables probability parameter. The default is 0.5.}
 \item{nWarm}{The size of the Markov chain Monte Carlo warmup, a positive integer, when method is Markov chain Monte Carlo. The default is 1000.}
 \item{nKept}{The size of the kept Markov chain Monte Carlo samples, a positive integer, when the method is Markov chain Monte Carlo. The default is 1000.}
 \item{nThin}{The thinning factor for the kept Markov chain Monte Carlo samples, a positive integer, when the method is Markov chain Monte Carlo. The default is 1.}

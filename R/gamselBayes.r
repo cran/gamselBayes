@@ -3,7 +3,7 @@
 # For performing generalized additive model selection via a 
 # Bayesian inference engine approach.
 
-# Last changed: 03 DEC 2021
+# Last changed: 03 AUG 2023
 
 gamselBayes <- function(y,Xlinear=NULL,Xgeneral=NULL,method="MCMC",lowerMakesSparser=NULL,
                         family="gaussian",verbose=TRUE,control=gamselBayes.control())
@@ -46,15 +46,12 @@ gamselBayes <- function(y,Xlinear=NULL,Xgeneral=NULL,method="MCMC",lowerMakesSpa
    numIntKnots  <- control$numIntKnots
    truncateBasis <- control$truncateBasis
    numBasis <- control$numBasis
-   effectiveZero <- control$effectiveZero
    sigmaBeta0HYP  <- control$sigmabeta0
    sbetaHYP  <- control$sbeta
    sepsHYP  <- control$sepsilon
    suHYP  <- control$su
-   AbetaHYP <- control$Abeta
-   BbetaHYP <- control$Bbeta
-   AuHYP <- control$Au
-   BuHYP <- control$Bu
+   rhoBetaHYP <- control$rhoBeta
+   rhoUHYP <- control$rhoU
    nWarm <- control$nWarm
    nKept <- control$nKept
    nThin <- control$nThin
@@ -101,8 +98,8 @@ gamselBayes <- function(y,Xlinear=NULL,Xgeneral=NULL,method="MCMC",lowerMakesSpa
  
    # Organise the hyperparameters:
  
-   hyperPars <- c(sigmaBeta0HYP,sepsHYP,sbetaHYP,suHYP,AbetaHYP,
-                  BbetaHYP,AuHYP,BuHYP)
+   hyperPars <- c(sigmaBeta0HYP,sepsHYP,sbetaHYP,suHYP,rhoBetaHYP,
+                  rhoUHYP)
 
    # Obtain fits:
 
@@ -126,45 +123,29 @@ gamselBayes <- function(y,Xlinear=NULL,Xgeneral=NULL,method="MCMC",lowerMakesSpa
  
    if (method=="MCMC")
    {
-      # Extract the MCMC samples for the coefficients:
+      # Extract the MCMC samples for the "gamma" variables:
       
-      betaTildeMCMC <- MCMCobj$betaTilde
       gammaBetaMCMC <- MCMCobj$gammaBeta
-      uTildeMCMC <- MCMCobj$uTilde
       gammaUMCMC <- MCMCobj$gammaU
-      betaMCMC <- gammaBetaMCMC*betaTildeMCMC
-      if (dGeneral>0)
-      {
-         uMCMC <- vector("list",dGeneral)
-         for (j in 1:dGeneral)
-            uMCMC[[j]] <- gammaUMCMC[[j]]*uTildeMCMC[[j]]
-      }
 
-      effectTypesHat <- effTypesFromMCMC(betaMCMC,uMCMC,dLinear,lowerMakesSparser,
-                                         effectiveZero)
-   }
+      effectTypesHat <- effTypesFromMCMC(gammaBetaMCMC,gammaUMCMC,lowerMakesSparser)
+   }    
 
    if (method=="MFVB")
    {
-      # Extract the MFVB parameters for the coefficients:
+      # Extract the MFVB parameters for the "gamma" variables"
 
-      mu.q.betaTilde <- MFVBobj$betaTilde$mu.q.betaTilde
-      sigsq.q.betaTilde <- diag(MFVBobj$betaTilde$Sigma.q.betaTilde)
       mu.q.gamma.beta <- MFVBobj$gammaBeta
-      mu.q.uTilde <- MFVBobj$uTilde$mu.q.uTilde
-      sigsq.q.uTilde <- MFVBobj$uTilde$sigsq.q.uTilde
       mu.q.gamma.u <- MFVBobj$gammaU
 
-      effectTypesHat <- effTypesFromMFVB(mu.q.betaTilde,sigsq.q.betaTilde,mu.q.gamma.beta,
-                                         mu.q.uTilde,sigsq.q.uTilde,mu.q.gamma.u,
-                                         lowerMakesSparser,effectiveZero)
+      effectTypesHat <- effTypesFromMFVB(mu.q.gamma.beta,mu.q.gamma.u,lowerMakesSparser)
    }
 
    # Prepare and return the output object:
 
    outObj <- list(method=method,family=family,Xlinear=Xlinear,Xgeneral=Xgeneral,rangex=rangexList,
                   intKnots=intKnotsList,OStoDRmat=OStoDRmatList,truncateBasis=truncateBasis,
-                  numBasis=numBasis,effectiveZero=effectiveZero,MCMC=MCMCobj,MFVB=MFVBobj,
+                  numBasis=numBasis,MCMC=MCMCobj,MFVB=MFVBobj,
                   effectTypesHat=effectTypesHat,meany=meany,sdy=sdy,meanXlinear=meanXlinear,
                   sdXlinear=sdXlinear,meanXgeneral=meanXgeneral,sdXgeneral=sdXgeneral)
 

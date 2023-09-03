@@ -4,7 +4,7 @@
 # iterations for fitting and inference for the 
 # Bayesian gamsel-type model.
 
-# Last changed: 13 OCT 2021
+# Last changed: 31 JUL 2023
 
 gamselBayesMCMC <- function(y,X,Z,ncZvec,family,XTy,XTX,ZTy,ZTX,ZTZ,
                             hyperPars,nWarm,nKept,nThin,msgCode)
@@ -15,11 +15,9 @@ gamselBayesMCMC <- function(y,X,Z,ncZvec,family,XTy,XTX,ZTy,ZTX,ZTZ,
    sepsHYP <- hyperPars[2]
    sbetaHYP <- hyperPars[3]
    suHYP <- hyperPars[4]
-   AbetaHYP <- hyperPars[5]
-   BbetaHYP <- hyperPars[6]
-   AuHYP <- hyperPars[7]
-   BuHYP <- hyperPars[8]
-
+   rhoBetaHYP <- hyperPars[5]
+   rhoUHYP <- hyperPars[6]
+ 
    # Set MCMC dimension variable: 
   
    numMCMC <-  nWarm + nKept 
@@ -61,23 +59,20 @@ gamselBayesMCMC <- function(y,X,Z,ncZvec,family,XTy,XTX,ZTy,ZTX,ZTZ,
    innerObj <- gamselBayesMCMCinner(y,X,Z,familyNum,ncZvec,ncZmax,dGeneral,
                                     ZsttInds,ZendInds,XTy,XTX,ZTy,ZTX, ZTZ,
                                     sigmaBeta0HYP,sepsHYP,sbetaHYP,suHYP,
-                                    AbetaHYP,BbetaHYP,AuHYP,BuHYP,numMCMC,
-                                    msgCode)
+                                    rhoBetaHYP,rhoUHYP,numMCMC,msgCode)
 
    # Extract samples and discard the warm-up values:
 
-   beta0MCMC <- innerObj$beta0[-(1:(nWarm))]
-   betaTildeMCMC <- t(as.matrix(innerObj$betaTilde[,-(1:(nWarm)),drop=FALSE]))
-   gammaBetaMCMC <- t(as.matrix(innerObj$gammaBeta[,-(1:(nWarm)),drop=FALSE]))
-   sigmaBetaMCMC <- 1.0/sqrt(innerObj$recipSigsqBeta[-(1:(nWarm))])
-   rhoBetaMCMC <- innerObj$rhoBeta[-(1:(nWarm))]
-   sigmaEpsMCMC <- 1.0/sqrt(innerObj$recipSigsqEps[-(1:(nWarm))])
+   beta0MCMC <- innerObj$beta0[-(1:nWarm)]
+   betaTildeMCMC <- t(as.matrix(innerObj$betaTilde[,-(1:nWarm),drop=FALSE]))
+   gammaBetaMCMC <- t(as.matrix(innerObj$gammaBeta[,-(1:nWarm),drop=FALSE]))
+   sigmaBetaMCMC <- 1.0/sqrt(innerObj$recipSigsqBeta[-(1:nWarm)])
+   sigmaEpsMCMC <- 1.0/sqrt(innerObj$recipSigsqEps[-(1:nWarm)])
 
    if (dGeneral>0)
    {
-      uTildeArrayMCMC <- innerObj$uTilde[,,-(1:(nWarm)),drop=FALSE]
-      gammaUArrayMCMC <- innerObj$gammaU[,,-(1:(nWarm)),drop=FALSE]
-      rhoUMCMC <- t(innerObj$rhoU[,-(1:(nWarm)),drop=FALSE])
+      gammaUMCMC <- t(as.matrix(innerObj$gammaU[,-(1:nWarm)]))
+      uTildeArrayMCMC <- innerObj$uTilde[,,-(1:nWarm),drop=FALSE]
    }
 
    # Do thinning if 'nThin' exceeds unity:
@@ -89,13 +84,11 @@ gamselBayesMCMC <- function(y,X,Z,ncZvec,family,XTy,XTX,ZTy,ZTX,ZTZ,
       betaTildeMCMC <- as.matrix(betaTildeMCMC[thinnedInds,])
       gammaBetaMCMC <- as.matrix(gammaBetaMCMC[thinnedInds,])
       sigmaBetaMCMC <- sigmaBetaMCMC[thinnedInds]
-      rhoBetaMCMC <- rhoBetaMCMC[thinnedInds]
       sigmaEpsMCMC <- sigmaEpsMCMC[thinnedInds]
       if (dGeneral>0)
       {
+         gammaUMCMC <- as.matrix(gammaUMCMC[thinnedInds,])
          uTildeArrayMCMC <- uTildeArrayMCMC[,,thinnedInds,drop=FALSE]
-         gammaUArrayMCMC <- gammaUArrayMCMC[,,thinnedInds,drop=FALSE]
-         rhoUMCMC <- as.matrix(rhoUMCMC[thinnedInds,]) 
       }
    }
 
@@ -106,33 +99,26 @@ gamselBayesMCMC <- function(y,X,Z,ncZvec,family,XTy,XTX,ZTy,ZTX,ZTZ,
 
    if (dGeneral>0)
    {
-      # Organise the "uTilde" and "gammaU" MCMC samples into 
-      # lists, with each list entry corresponding to a particular
+      # Organise the "uTilde" MCMC samples into a list
+      # with each list entry corresponding to a particular
       # predictor and a matrix with rows corresponding to the
       # MCMC samples:
 
       uTildeMCMC <- vector("list",dGeneral)
-      gammaUMCMC <- vector("list",dGeneral)
-
       for (j in 1:dGeneral)
-      {
          uTildeMCMC[[j]] <- t(uTildeArrayMCMC[,j,])
-         gammaUMCMC[[j]] <- t(gammaUArrayMCMC[,j,])
-      }
+
    }
 
    if (dGeneral==0)
-   {
       uTildeMCMC <- NULL
-      gammaUMCMC <- NULL
-      rhoUMCMC <- NULL
-   }
-
+  
    # Return kept samples:
 
-   return(list(beta0=beta0MCMC,betaTilde=betaTildeMCMC,gammaBeta=gammaBetaMCMC,
-               sigmaBeta=sigmaBetaMCMC,rhoBeta=rhoBetaMCMC,uTilde=uTildeMCMC,
-               gammaU=gammaUMCMC,rhoU=rhoUMCMC,sigmaEps=sigmaEpsMCMC))
+    return(list(beta0=beta0MCMC,betaTilde=betaTildeMCMC,
+                gammaBeta=gammaBetaMCMC,sigmaBeta=sigmaBetaMCMC,
+                uTilde=uTildeMCMC,gammaU=gammaUMCMC,
+                sigmaEps=sigmaEpsMCMC))
 }
 
 ############ End of gamselBayesMCMC ############

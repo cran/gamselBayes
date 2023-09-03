@@ -2,7 +2,7 @@
 
 /* Carries out Markov chain Monte Carlo for a gamsel-type model. */
 
-/* Last changed: 09 FEB 2022 */
+/* Last changed: 31 JUL 2023 */
 
 #include <RcppArmadillo.h>
 #include "printPercMsgs.h"
@@ -18,8 +18,8 @@ List gamselBayesMCMCinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum,
                           arma::uvec ncZvec, int ncZmax, int dGeneral, arma::uvec ZsttInds, 
                           arma::uvec ZendInds, arma::vec XTy, arma::mat XTX, arma::vec ZTy,
                           arma::mat ZTX, arma::mat ZTZ,double sigmaBeta0HYP, double sepsHYP, 
-                          double sbetaHYP, double suHYP, double AbetaHYP, double BbetaHYP,
-                          double AuHYP, double BuHYP, int numMCMC, int msgCode) 
+                          double sbetaHYP, double suHYP, double rhoBetaHYP, double rhoUHYP,
+                          int numMCMC, int msgCode) 
 {
    /* Declare all non-input variables: */
 
@@ -34,7 +34,7 @@ List gamselBayesMCMCinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum,
    arma::mat gammaBeta(ncX,numMCMC); 
    arma::mat bBeta(ncX,numMCMC); 
    arma::cube uTilde(ncZmax,dGeneral,numMCMC);
-   arma::cube gammaU(ncZmax,dGeneral,numMCMC);
+   arma::mat gammaU(dGeneral,numMCMC);
    arma::vec recipSigsqBeta(numMCMC);
    arma::vec recipaBeta(numMCMC);
    arma::vec recipSigsqEps(numMCMC); 
@@ -49,9 +49,6 @@ List gamselBayesMCMCinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum,
    arma::vec z2(ncZmax);
    double scaleVal;
    double shapeVal;
-   double shapeValDash;
-   arma::vec rhoBeta(numMCMC); 
-   arma::mat rhoU(dGeneral,numMCMC);
    double probVal; 
    arma::mat bU(dGeneral,numMCMC);
    arma::mat recipSigsqU(dGeneral,numMCMC);
@@ -79,27 +76,26 @@ List gamselBayesMCMCinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum,
    arma::vec secondTermBeta(ncX);
    arma::vec invGaussParmBeta(ncX);
    arma::vec firstTermU(ncZmax);
-   arma::vec secondTermUFac1; 
-   arma::vec secondTermUFac2;
    arma::vec secondTermU(ncZmax);
    arma::vec invGaussParmU(dGeneral);
    double quadTerm;
+   double logitBeta;
+   double logitU;
    arma::vec betaCurr(ncX);
    arma::mat uCurr(ncZmax,dGeneral);
    arma::mat uTildeCurr(ncZmax,dGeneral);
-   arma::mat gammaUcurr(ncZmax,dGeneral);
+   arma::vec gammaUcurr(dGeneral);
    arma::vec XTXej(ncX);
    arma::uvec Kminus1(dGeneral);
-
-   /* Initialise chains: */
    
+   /* Initialise chains: */
+
    beta0 = arma::ones(numMCMC);
    betaTilde = arma::zeros(ncX,numMCMC);
    bBeta = arma::ones(ncX,numMCMC);
    recipSigsqBeta = arma::ones(numMCMC);
    recipaBeta = arma::ones(numMCMC);
    gammaBeta = 0.5*arma::ones(ncX,numMCMC);
-   rhoBeta = 0.5*arma::ones(numMCMC);
    recipSigsqEps = arma::ones(numMCMC);
    recipaEps = arma::ones(numMCMC);
 
@@ -108,15 +104,14 @@ List gamselBayesMCMCinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum,
       bU = arma::ones(dGeneral,numMCMC);
       recipSigsqU = arma::ones(dGeneral,numMCMC);
       recipaU = arma::ones(dGeneral,numMCMC);
-      rhoU = 0.5*arma::ones(dGeneral,numMCMC);
-      
+
       for (int g=0; g<numMCMC; g++)
       {
          uTilde.slice(g) = arma::zeros(ncZmax,dGeneral);
-         gammaU.slice(g) = 0.5*arma::ones(ncZmax,dGeneral);
+         gammaU.col(g) = 0.5*arma::ones(dGeneral);
       }
    }
-
+   
    /* Do data matrix initialisations: */
 
    Kminus1 = ncZvec - 1;
@@ -131,6 +126,11 @@ List gamselBayesMCMCinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum,
             wZmat(k,j) = ZTZ.rows(ZsttInds(j),ZendInds(j)).cols(ZsttInds(j),ZendInds(j))(k,k);
       }
    }
+
+   /* Compute the logit function constants: */
+
+   logitBeta = log(rhoBetaHYP/(1.0 - rhoBetaHYP));
+   logitU = log(rhoUHYP/(1.0 - rhoUHYP));
 
    /* Perform Markov chain Monte Carlo sampling: */
 
@@ -166,8 +166,7 @@ List gamselBayesMCMCinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum,
          for (int j=0; j<dGeneral; j++)
          {
             ZTXj = ZTX.rows(ZsttInds(j),ZendInds(j));
-            omega3 = omega3 - ZTXj.t()*((gammaU.slice(g-1).rows(0,Kminus1(j)).col(j))
-                                        %(uTilde.slice(g-1).rows(0,Kminus1(j)).col(j)));
+            omega3 = omega3 - gammaU(j,g-1)*(ZTXj.t()*uTilde.slice(g-1).rows(0,Kminus1(j)).col(j));
          }
       }     
 
@@ -177,7 +176,7 @@ List gamselBayesMCMCinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum,
       firstTermBeta = (UOmega.t()*z1)/sqrt(dOmega);                         
       secondTermBeta  = recipSigsqEps(g-1)*(UOmega.t()*(gammaBeta.col(g-1)%omega3))/dOmega;   
       betaTilde.col(g) = UOmega*(firstTermBeta + secondTermBeta);                     
-
+      
       /* Draw sample from the b_beta full conditional distribution: */
    
       invGaussParmBeta = 1.0/(sqrt(recipSigsqBeta(g-1))*abs(betaTilde.col(g)));
@@ -196,11 +195,16 @@ List gamselBayesMCMCinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum,
       recipaBeta(g) = R::rgamma(shapeVal,scaleVal);
 
       /* Draw sample from the gamma_beta full conditional distribution: */
-    
+
       betaCurr = gammaBeta.col(g-1)%betaTilde.col(g);
       if (dGeneral>0)
-         uCurr = gammaU.slice(g-1)%uTilde.slice(g-1);
-
+      {
+         for (int j=0; j<dGeneral; j++)
+         {  
+           uCurr.col(j) = gammaU(j,g-1)*uTilde.slice(g-1).col(j); 
+         }
+      }
+         
       for (int j = 0 ; j < ncX; j++)
       {  
          omega4 = XTyAdj(j); 
@@ -217,17 +221,10 @@ List gamselBayesMCMCinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum,
             }
          } 
          quadTerm = betaTilde(j,g)*betaTilde(j,g)*XTX(j,j);
-         omega5 = (log(rhoBeta(g-1)/(1.0-rhoBeta(g-1)))
-                   - 0.5*recipSigsqEps(g-1)*(quadTerm - 2.0*betaTilde(j,g)*omega4));
+         omega5 = logitBeta - 0.5*recipSigsqEps(g-1)*(quadTerm - 2.0*betaTilde(j,g)*omega4);
          probVal = 1.0/(1.0 + exp(-omega5));
          gammaBeta(j,g) = R::rbinom(1,probVal);
       }  
-
-      /* Draw sample from the rho_beta full conditional distribution: */
-
-      shapeVal = AbetaHYP +  sum(gammaBeta.col(g));
-      shapeValDash = BbetaHYP + ncX - sum(gammaBeta.col(g));
-      rhoBeta(g) = R::rbeta(shapeVal,shapeValDash); 
 
       if (dGeneral>0)
       {
@@ -242,23 +239,20 @@ List gamselBayesMCMCinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum,
             for (int jd = 0 ; jd < dGeneral; jd++)                                                                   
             {                                                                                            
                ZTZjjd = ZTZ.rows(ZsttInds(j),ZendInds(j)).cols(ZsttInds(jd),ZendInds(jd));               
-               omega6 = omega6 -  ZTZjjd*((gammaU.slice(g-1).rows(0,Kminus1(jd)).col(jd))
-                                          %(uTildeCurr.rows(0,Kminus1(jd)).col(jd)));                            
+               omega6 = omega6 -  gammaU(jd,g-1)*(ZTZjjd*uTildeCurr.rows(0,Kminus1(jd)).col(jd));                            
             }                                                                                            
-            omega6 = omega6 + (wZmat.rows(0,Kminus1(j)).col(j))%(gammaU.slice(g-1).rows(0,Kminus1(j)).col(j))
-                                                               %(uTildeCurr.rows(0,Kminus1(j)).col(j));       
- 
-            omega7 = (recipSigsqEps(g-1)*(gammaU.slice(g-1).col(j).rows(0,Kminus1(j)))%(wZmat.col(j).rows(0,Kminus1(j)))
-                                      + recipSigsqU(j,g-1)*bU(j,g-1));
+            omega6 = omega6 + gammaU(j,g-1)*(wZmat.rows(0,Kminus1(j)).col(j)%uTildeCurr.rows(0,Kminus1(j)).col(j));       
+            
+            omega7 = recipSigsqEps(g-1)*gammaU(j,g-1)*wZmat.col(j).rows(0,Kminus1(j))
+                                      + recipSigsqU(j,g-1)*bU(j,g-1);
             z2 = rnorm(ncZmax);
             firstTermU = z2.rows(0,Kminus1(j))/sqrt(omega7);
-            secondTermUFac1 = recipSigsqEps(g-1)*gammaU.slice(g-1).rows(0,Kminus1(j)).col(j);
-            secondTermUFac2 = omega6.rows(0,Kminus1(j))/omega7.rows(0,Kminus1(j));  
-            secondTermU = secondTermUFac1%secondTermUFac2;
+            secondTermU = recipSigsqEps(g-1)*gammaU(j,g-1)*omega6.rows(0,Kminus1(j))/omega7.rows(0,Kminus1(j));  
+        
             uTildeCurr.rows(0,Kminus1(j)).col(j) =  firstTermU + secondTermU;
          }
          uTilde.slice(g) = uTildeCurr;
-
+         
          /* Draw sample from the b_{uj} full conditional distributions: */
    
          for (int j = 0 ; j < dGeneral; j++)
@@ -278,8 +272,8 @@ List gamselBayesMCMCinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum,
          }
 
          /* Draw sample from the gamma_u full conditional distribution: */
-
-         gammaUcurr = gammaU.slice(g-1);
+         
+         gammaUcurr = gammaU.col(g-1);
 
          for (int j = 0 ; j < dGeneral; j++)
          {  
@@ -288,32 +282,21 @@ List gamselBayesMCMCinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum,
             for (int jd = 0 ; jd < dGeneral; jd++)
             {
                ZTZjjd = ZTZ.rows(ZsttInds(j),ZendInds(j)).cols(ZsttInds(jd),ZendInds(jd));
-               omega8 = omega8 - ZTZjjd*((gammaUcurr.rows(0,Kminus1(jd)).col(jd))
-                                        %(uTilde.slice(g).rows(0,Kminus1(jd)).col(jd)));
-            } 
-            omega8 = omega8 + ((wZmat.rows(0,Kminus1(j)).col(j))
-                                        %(gammaUcurr.rows(0,Kminus1(j)).col(j))
-                                        %(uTilde.slice(g).rows(0,Kminus1(j)).col(j)));
-  
-            for (int k = 0; k < ncZvec(j); k++)
-            {
-               quadTerm = uTilde(k,j,g)*uTilde(k,j,g)*wZmat(k,j);
-               omega9 = log(rhoU(j,g-1)/(1.0 - rhoU(j,g-1))) 
-                       - 0.5*recipSigsqEps(g-1)*(quadTerm - 2.0*uTilde(k,j,g)*omega8(k));
-               probVal = 1.0/(1.0 + exp(-omega9));
-               gammaUcurr(k,j)  = R::rbinom(1,probVal);
+               omega8 = omega8 - gammaUcurr(jd)*(ZTZjjd*uTilde.slice(g).rows(0,Kminus1(jd)).col(jd));
             }
-         }
-         gammaU.slice(g) = gammaUcurr; 
-            
-         /* Draw sample from the rho_uj full conditional distributions: */
+            omega8 = omega8 + gammaUcurr(j)*(wZmat.rows(0,Kminus1(j)).col(j)%uTilde.slice(g).rows(0,Kminus1(j)).col(j)); 
 
-         for (int j = 0 ; j < dGeneral; j++)
-         {  
-            shapeVal = AuHYP + sum(gammaU.slice(g).rows(0,Kminus1(j)).col(j));
-            shapeValDash = BuHYP + ncZvec(j) - sum(gammaU.slice(g).rows(0,Kminus1(j)).col(j));
-            rhoU(j,g) = R::rbeta(shapeVal,shapeValDash); 
+            quadTerm = sum(wZmat.rows(0,Kminus1(j)).col(j)
+                           %(uTilde.slice(g).rows(0,Kminus1(j)).col(j)
+                           %uTilde.slice(g).rows(0,Kminus1(j)).col(j)));  
+            
+            omega9 = logitU - 0.5*recipSigsqEps(g-1)*(quadTerm
+                            - 2.0*sum(uTilde.slice(g).rows(0,Kminus1(j)).col(j)%omega8)); 
+            
+            probVal = 1.0/(1.0 + exp(-omega9));
+            gammaUcurr(j)  = R::rbinom(1,probVal);              
          }
+         gammaU.col(g) = gammaUcurr; 
       }
 
       omega10 = beta0(g)*arma::ones(n) + X*(gammaBeta.col(g)%betaTilde.col(g));
@@ -323,8 +306,7 @@ List gamselBayesMCMCinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum,
          for (int j=0; j<dGeneral ; j++)
          {
             Zj = Z.cols(ZsttInds(j),ZendInds(j));
-            omega10 = omega10 + Zj*((gammaU.slice(g).rows(0,Kminus1(j)).col(j))
-                                   %(uTilde.slice(g).rows(0,Kminus1(j)).col(j)));
+            omega10 = omega10 + gammaU(j,g)*(Zj*uTilde.slice(g).rows(0,Kminus1(j)).col(j));
          }
       }
 
@@ -362,10 +344,8 @@ List gamselBayesMCMCinner(arma::vec y, arma::mat X, arma::mat Z,int familyNum,
                            Named("betaTilde",betaTilde),
                            Named("gammaBeta",gammaBeta),
                            Named("recipSigsqBeta",recipSigsqBeta),
-                           Named("rhoBeta",rhoBeta),
                            Named("uTilde",uTilde),
                            Named("gammaU",gammaU),
-                           Named("rhoU",rhoU),
                            Named("recipSigsqU",recipSigsqU),
                            Named("recipSigsqEps",recipSigsqEps));
 

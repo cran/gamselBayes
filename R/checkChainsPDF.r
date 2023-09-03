@@ -1,11 +1,14 @@
-########## R function: checkChains ##########
+########## R function: checkChainsPDF ##########
 
 # For graphically checking the Markov chain Monte Carlo 
 # samples ("chains") of a gamselBayes() fit object.
 
+# This version is for PDF file storage.
+
 # Last changed: 04 AUG 2023
 
-checkChains <- function(fitObject,colourVersion=TRUE,paletteNum=1)
+checkChainsPDF <- function(fitObject,colourVersion=TRUE,paletteNum=1,
+                           fileNamePrefix="checkChains")
 {
    # Ensure that the "colourVersion" input is legal:
 
@@ -31,13 +34,13 @@ checkChains <- function(fitObject,colourVersion=TRUE,paletteNum=1)
 
    method <- fitObject$method
 
-   # If "method" is MFVB then print an informational messages,
+   # If "method" is MFVB then print error-type message,
    # otherwise obtain relevant MCMC samples and graphically
    # display them:
 
    if (method=="MFVB")
    {
-      message("The checkChains() function only applies to the method equalling \"MCMC\".")
+      cat("The checkChains() function only applies to the method equalling \"MCMC\".\n")
    }
 
    if (method=="MCMC")
@@ -68,11 +71,10 @@ checkChains <- function(fitObject,colourVersion=TRUE,paletteNum=1)
 
       if (numMCMCsamps==0)
       {
-         message("There are no Markov chain Monte Carlo samples to view.")
+         cat("There are no Markov chain Monte Carlo samples to view.\n")
       }
       if (numMCMCsamps>0)
       {
-          
          # Extract the predictor values:
 
          Xlinear <- fitObject$Xlinear
@@ -92,6 +94,7 @@ checkChains <- function(fitObject,colourVersion=TRUE,paletteNum=1)
          sampSizeVal <- nrow(X)
          if (sampSizeVal>1000)
          {
+            set.seed(1)
             subInds <- sample(1:sampSizeVal,1000,replace=FALSE)
             X <- as.matrix(X[subInds,])  
          }     
@@ -166,7 +169,7 @@ checkChains <- function(fitObject,colourVersion=TRUE,paletteNum=1)
             {
                xCurr <- sort(X[,j])
                Zlist[[j]] <- ZcDR(xCurr,rangexList[[indsEstNonlinEff[j]-dLinear]],
-                                  intKnotsList[[indsEstNonlinEff[j]-dLinear]])
+                                 intKnotsList[[indsEstNonlinEff[j]-dLinear]])
                if ((truncateBasis)&(ncol(Zlist[[j]])>=numBasis))
                   Zlist[[j]] <- Zlist[[j]][,1:numBasis]
                ncZvec <- c(ncZvec,ncol(Zlist[[j]]))
@@ -207,45 +210,58 @@ checkChains <- function(fitObject,colourVersion=TRUE,paletteNum=1)
                MCMCsampsToPlotNonlin[,j] <- fHatMCMCcurr[indMedian,] 
             }
          }
-       
-         # Combine the matrices of MCMC samples of both type:
+      }
 
-         if (is.null(MCMCsampsToPlotLin)) MCMCsampsToPlot <- MCMCsampsToPlotNonlin
-         if (is.null(MCMCsampsToPlotNonlin)) MCMCsampsToPlot <- MCMCsampsToPlotLin
-         if ((!is.null(MCMCsampsToPlotLin))&(!is.null(MCMCsampsToPlotNonlin)))
-            MCMCsampsToPlot <- as.matrix(cbind(MCMCsampsToPlotLin,MCMCsampsToPlotNonlin))
+      # Combine the matrices of MCMC samples of both type:
+
+      if (is.null(MCMCsampsToPlotLin)) MCMCsampsToPlot <- MCMCsampsToPlotNonlin
+      if (is.null(MCMCsampsToPlotNonlin)) MCMCsampsToPlot <- MCMCsampsToPlotLin
+      if ((!is.null(MCMCsampsToPlotLin))&(!is.null(MCMCsampsToPlotNonlin)))
+         MCMCsampsToPlot <- as.matrix(cbind(MCMCsampsToPlotLin,MCMCsampsToPlotNonlin))
   
-         # Re-order the samples alphabetically:
+      # Re-order the samples alphabetically:
 
-         alphaOrder <- order(predNames)
-         predNames <- predNames[alphaOrder]
-         MCMCsampsToPlot <- as.matrix(MCMCsampsToPlot[,alphaOrder])
+      alphaOrder <- order(predNames)
+      predNames <- predNames[alphaOrder]
+      MCMCsampsToPlot <- MCMCsampsToPlot[,alphaOrder]
 
-         # Determine number of views for plotting:
+      # Determine number of views for plotting:
 
-         numMCMCsampsToPlot <- ncol(MCMCsampsToPlot)
-         numSampsPerView <- 6
-         numViews <- ceiling(numMCMCsampsToPlot/numSampsPerView)
+      numMCMCsampsToPlot <- ncol(MCMCsampsToPlot)
+      numSampsPerView <- 6
+      numViews <- ceiling(numMCMCsampsToPlot/numSampsPerView)
 
-         # Loop through the views:
+      # Loop through the views:
 
-         indsStt <- 1
-         for (iView in 1:numViews)
-         {
-            indsEnd <- indsStt + numSampsPerView - 1
-            if (indsEnd>numMCMCsampsToPlot)
-               indsEnd <- numMCMCsampsToPlot
-            indsCurr <- indsStt:indsEnd
-            summChainsGamsel(as.matrix(MCMCsampsToPlot[,indsCurr]),predNames[indsCurr],
+      indsStt <- 1
+      for (iView in 1:numViews)
+      {
+         fileNameCurr <- paste(fileNamePrefix,".pdf",sep="")
+           
+
+         indsEnd <- indsStt + numSampsPerView - 1
+         if (indsEnd>numMCMCsampsToPlot)
+            indsEnd <- numMCMCsampsToPlot
+         indsCurr <- indsStt:indsEnd
+
+         # Set the current file name:
+
+         fileNameCurr <- paste(fileNamePrefix,iView,".pdf",sep="")
+
+         # Set up the PDF file:
+
+         heightVal <- length(indsCurr) + 1
+         pdf(fileNameCurr,width=9,height=heightVal)
+      
+         # Obtain graphic for current view:
+
+         summChainsGamselPDF(as.matrix(MCMCsampsToPlot[,indsCurr]),predNames[indsCurr],
                              colourVersion=colourVersion,paletteNum=paletteNum)
-            indsStt <- indsEnd + 1
-            if (indsEnd<numMCMCsampsToPlot)
-               readline("Hit Enter to view the next checkChains() plot.\n")
-         }
+         indsStt <- indsEnd + 1
       }
    }
 
    return(invisible())
 }
 
-############ End of checkChains ############
+############ End of checkChainsPDF ############

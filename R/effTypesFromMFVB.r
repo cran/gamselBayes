@@ -4,16 +4,15 @@
 # model fit using mean field variational Bayes (MFVB)
 # samples from the Bayesian gamsel-type model fit.
 
-# Last changed: 06 OCT 2021
+# Last changed: 03 AUG 2023
 
-effTypesFromMFVB <- function(mu.q.betaTilde,sigsq.q.betaTilde,mu.q.gamma.beta,
-                            mu.q.uTilde,sigsq.q.uTilde,mu.q.gamma.u,
-                            lowerMakesSparser,effectiveZero)
+effTypesFromMFVB <- function(mu.q.gamma.beta,mu.q.gamma.u,lowerMakesSparser)
 {
    # Determine dimension varibles:
 
    numPred <- length(mu.q.gamma.beta)
-   dGeneral <- length(mu.q.gamma.u)
+   if (is.null(mu.q.gamma.u))  dGeneral <- 0
+   if (!is.null(mu.q.gamma.u)) dGeneral <- length(mu.q.gamma.u)
    dLinear <- numPred - dGeneral
 
    # Set up the effect type character string 
@@ -26,9 +25,7 @@ effTypesFromMFVB <- function(mu.q.betaTilde,sigsq.q.betaTilde,mu.q.gamma.beta,
 
    for (iPred in 1:numPred)
    {
-      isBetaZero <- coefZeroMFVB((1-mu.q.gamma.beta[iPred]),lowerMakesSparser,effectiveZero)
-
-      if (!isBetaZero)
+      if (mu.q.gamma.beta[iPred]>(1-lowerMakesSparser))
          effectTypesHat[iPred] <- "linear"
    }
 
@@ -36,18 +33,10 @@ effTypesFromMFVB <- function(mu.q.betaTilde,sigsq.q.betaTilde,mu.q.gamma.beta,
    {
       iColSttPos <- 1
 
-      # Loop through the remaining "u" mu.q.gamma.u
-      # and update according to *any* of the spikes at
-      # zero not being below a threshold value:
-
       for (jNon in 1:dGeneral)
       {
-         for (iCol in iColSttPos:length(mu.q.gamma.u[[jNon]]))
-         {
-            isUkZero <- coefZeroMFVB((1-mu.q.gamma.u[[jNon]][iCol]),lowerMakesSparser,effectiveZero)
-            if (!isUkZero)
-               effectTypesHat[dLinear+jNon] <- "nonlinear"
-         }
+         if (mu.q.gamma.u[jNon]>(1-lowerMakesSparser))
+            effectTypesHat[dLinear+jNon] <- "nonlinear"
       }
    }
 
