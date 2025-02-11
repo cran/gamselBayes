@@ -55,7 +55,7 @@ gamselBayesMCMC <- function(y,X,Z,ncZvec,family,XTy,XTX,ZTy,ZTX,ZTZ,
    }
 
    # Obtain MCMC samples:
-
+    
    innerObj <- gamselBayesMCMCinner(y,X,Z,familyNum,ncZvec,ncZmax,dGeneral,
                                     ZsttInds,ZendInds,XTy,XTX,ZTy,ZTX, ZTZ,
                                     sigmaBeta0HYP,sepsHYP,sbetaHYP,suHYP,

@@ -65,7 +65,6 @@ displayAllGAMfits <- function(X,xgList,estgList,lowgList,uppgList,xLabsVec,
  
       if (numPanelsCurr==1) dimVec <- c(1,1)
       if (numPanelsCurr==2) dimVec <- c(1,2)
-
       if (any(numPanelsCurr==(3:4))) dimVec <- c(2,2)
       if (any(numPanelsCurr==(5:6))) dimVec <- c(3,2)
       if (any(numPanelsCurr==(7:9))) dimVec <- c(3,3)
@@ -161,8 +160,8 @@ displayAllGAMfits <- function(X,xgList,estgList,lowgList,uppgList,xLabsVec,
 
          # Create the plot for the current panel:
 
-         plot(0,type="n",bty="l",xlab=xLabsVec[icntLab],ylab=yLabsVec[icntLab],xlim=xlimVal,ylim=ylimVal,
-              cex.axis = cex.axis,cex.lab = cex.lab)
+         plot(0,type="n",bty="l",xlab=xLabsVec[icntLab],ylab=yLabsVec[icntLab],
+              xlim=xlimVal,ylim=ylimVal,cex.axis = cex.axis,cex.lab = cex.lab)
          icntLab <- icntLab + 1
 
          if (length(xgCurr)>0)

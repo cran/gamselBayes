@@ -3,7 +3,7 @@
 # For updating a gamselBayes() fit object after possible adjustment
 # to parameters controlling effect type estimation.
 
-# Last changed: 03 AUG 2023
+# Last changed: 11 FEB 2025
 
 gamselBayesUpdate <- function(fitObject,lowerMakesSparser=NULL)
 {
@@ -18,8 +18,8 @@ gamselBayesUpdate <- function(fitObject,lowerMakesSparser=NULL)
          warnStr3 <- "The default value for the specified method was used instead."
          warning(paste(warnStr1,"\n  ",warnStr2,"\n  ",warnStr3,"\n",sep=""),
                  immediate.=TRUE)
-         if (fitObject$method=="MCMC") lowerMakesSparser <- 0.1
-         if (fitObject$method=="MFVB") lowerMakesSparser <- 0
+         if (fitObject$method=="MCMC") lowerMakesSparser <- 0.5
+         if (fitObject$method=="MFVB") lowerMakesSparser <- 0.1
       }
    }
 
