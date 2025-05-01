@@ -26,13 +26,20 @@ gamselBayes.control(numIntKnots = 25,truncateBasis = TRUE,numBasis = 12,
 \item{nThin}{The thinning factor for the kept Markov chain Monte Carlo samples, a positive integer, when the method is Markov chain Monte Carlo. The default is 1.}
 \item{maxIter}{The maximum number of mean field variational Bayes iterations, a positive integer, when the method is mean field variational Bayes. The default is 1000.}
 \item{toler}{The convergence tolerance for mean field variational Bayes iterations, a positive number less than 0.5, when the method is mean field variational Bayes. Convergence is deemed to have occurred if the relative change in the logarithm of the approximate marginal likelihood falls below \code{toler}. The default is 1e-8.}
-\item{msgCode}{Code for the nature of progress messages printed to the screen. If msgCode=0 then no progress messages are printed. If msgCode=1 then a messages printed each time approximately each 10\% of the sampling is completed. If msgCode=2 then a messages printed each time approximately each 10\% of the sampling is completed. The default is 1.}
+\item{msgCode}{Code for the nature of progress messages printed to the
+screen. If msgCode=1
+then a message is printed when each 1\% of the sampling
+is completed for the first 10\%, and then when each subsequent 
+ 10\% of the sampling is completed. If msgCode=2 then a message is
+printed when each 1\% of the sampling is completed. The default is 1.}
 }
 \value{A list containing values of each of the seventeen control parameters, packaged to supply the \code{control} argument to \code{gamselBayes}. The values for \code{gamselBayes.control} can be specified in the call to \code{gamselBayes}.
 }
 \author{Virginia X. He \email{virginia.x.he@student.uts.edu.au} and Matt P. Wand \email{matt.wand@uts.edu.au}}
-\references{He, V.X. and Wand, M.P. (2021). 
-Generalized additive model selection via Bayesian inference. Submitted.}
+\references{
+He, V.X. and Wand, M.P. (2024). Bayesian generalized additive model
+selection including a fast variational option.\cr
+\emph{Advances in Statistical Analysis}, \bold{108}, 639--668.}
 \examples{library(gamselBayes) 
 
 # Generate some simple regression-type data:

@@ -4,7 +4,7 @@
 # iterations for fitting and inference for the 
 # Bayesian gamsel-type model.
 
-# Last changed: 31 JUL 2023
+# Last changed: 30 APR 2025
 
 gamselBayesMCMC <- function(y,X,Z,ncZvec,family,XTy,XTX,ZTy,ZTX,ZTZ,
                             hyperPars,nWarm,nKept,nThin,msgCode)
@@ -69,12 +69,16 @@ gamselBayesMCMC <- function(y,X,Z,ncZvec,family,XTy,XTX,ZTy,ZTX,ZTZ,
    sigmaBetaMCMC <- 1.0/sqrt(innerObj$recipSigsqBeta[-(1:nWarm)])
    sigmaEpsMCMC <- 1.0/sqrt(innerObj$recipSigsqEps[-(1:nWarm)])
 
+
+
    if (dGeneral>0)
    {
       gammaUMCMC <- t(as.matrix(innerObj$gammaU[,-(1:nWarm)]))
       uTildeArrayMCMC <- innerObj$uTilde[,,-(1:nWarm),drop=FALSE]
    }
 
+
+    
    # Do thinning if 'nThin' exceeds unity:
 
    if (nThin>1)
@@ -111,8 +115,11 @@ gamselBayesMCMC <- function(y,X,Z,ncZvec,family,XTy,XTX,ZTy,ZTX,ZTZ,
    }
 
    if (dGeneral==0)
+   {
+      gammaUMCMC <- NULL
       uTildeMCMC <- NULL
-  
+   }
+
    # Return kept samples:
 
     return(list(beta0=beta0MCMC,betaTilde=betaTildeMCMC,

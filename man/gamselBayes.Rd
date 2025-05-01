@@ -21,7 +21,7 @@ The default is "gaussian".}
 \item{verbose}{Boolean variable for specifying whether or not progress messages are printed to the console. The default is TRUE.}
 \item{control}{Function for controlling the spline bases, Markov chain Monte Carlo sampling, mean field variational Bayes and other specifications.}
 }
-\details{Generalized additive model selection via approximate Bayesian inference is provided. Bayesian mixed model-based penalized splines with spike-and-slab-type coefficient prior distributions are used to facilitate fitting and selection. The approximate Bayesian inference engine options are: (1) Markov chain Monte Carlo and (2) mean field variational Bayes. Markov chain Monte Carlo has better Bayesian inferential accuracy, but requires a longer run-time. Mean field variational Bayes is faster, but less accurate. The methodology is described in He and Wand (2021) <arXiv:2201.00412>. 
+\details{Generalized additive model selection via approximate Bayesian inference is provided. Bayesian mixed model-based penalized splines with spike-and-slab-type coefficient prior distributions are used to facilitate fitting and selection. The approximate Bayesian inference engine options are: (1) Markov chain Monte Carlo and (2) mean field variational Bayes. Markov chain Monte Carlo has better Bayesian inferential accuracy, but requires a longer run-time. Mean field variational Bayes is faster, but less accurate. The methodology is described in He and Wand (2024) <doi:10.1007/s10182-023-00490-y>. 
 }
 \value{An object of class \code{gamselBayes}, which is a list with the following components:
 \item{method}{the value of \code{method}.}
@@ -50,7 +50,8 @@ The default is "gaussian".}
    \code{sigmaBeta} = a vector with 2 entries, consisting of the Inverse Gamma q-density shape and rate parameters of the variance of the linear component coefficients.\cr
    \code{rhoBeta} = a vector with 2 entries, consisting of the Beta q-density shape parameters of the Bernoulli probability parameter of the linear component coefficients spike-and-slab auxiliary indicator variables.\cr
    \code{uTilde} = a two-component list containing the Multivariate Normal q-density parameters of the spline basis function coefficients without multiplication by the means of the \code{gammaU} q-densities. The list components are: \code{mu.q.uTilde}, the mean vectors for each predictor that is treated as potentially having a non-linear effect; \code{sigsq.q.uTilde}, the diagonal entries of the covariance matrices of each predictor that is treated as potentially having a non-linear effect.\cr
-   \code{gammaU} = a list containing the q-density means of the spline basis coefficients spike-and-slab auxiliary indicator variables. Each list component corresponds to a predictor that is treated as potentially having a non-linear effect.\cr
+   \code{gammaU} = a list containing the q-density means of the spline
+basis coefficients spike-and-slab auxiliary indicator variables. Each list component corresponds to a predictor that is treated as potentially having a non-linear effect.\cr
    \code{rhoU} = a two-component list with components \code{A.q.rho.u} and \code{B.q.rho.u}. The \code{A.q.rho.u} list component is a vector of Beta q-density first (one plus the power of rho) shape parameters corresponding to the spline basis coefficients spike-and-slab auxiliary indicator variables for each predictor that is treated as potentially having a non-linear effect. The \code{B.q.rho.u} list component is a vector of Beta q-density second (one plus the power of 1-rho) shape parameters corresponding to the spline basis coefficients spike-and-slab auxiliary indicator variables for each predictor that is treated as potentially having a non-linear effect.\cr
    \code{sigmaEps} = a vector with 2 entries, consisting of the Inverse Gamma q-density shape and rate parameters of the error variance.
 } 
@@ -64,7 +65,9 @@ The default is "gaussian".}
 \references{
 Chouldechova, A. and Hastie, T. (2015). Generalized additive model selection. <arXiv:1506.03850v2>.
 
-He, V.X. and Wand, M.P. (2021). Bayesian generalized additive model selection including a fast variational option. <arXiv:2021.PLACE-HOLDER>. 
+He, V.X. and Wand, M.P. (2024). Bayesian generalized additive model
+selection including a fast variational option.\cr
+\emph{Advances in Statistical Analysis}, \bold{108}, 639--668.
 }
 \examples{library(gamselBayes) 
 

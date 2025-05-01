@@ -21,10 +21,6 @@ logPhi <- function(x) {
     .Call(`_gamselBayes_logPhi`, x)
 }
 
-omitMatCol <- function(A, j) {
-    .Call(`_gamselBayes_omitMatCol`, A, j)
-}
-
 omitVecEnt <- function(a, j) {
     .Call(`_gamselBayes_omitVecEnt`, a, j)
 }

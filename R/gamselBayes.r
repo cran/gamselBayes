@@ -3,7 +3,7 @@
 # For performing generalized additive model selection via a 
 # Bayesian inference engine approach.
 
-# Last changed: 03 AUG 2023
+# Last changed: 01 MAY 2025
 
 gamselBayes <- function(y,Xlinear=NULL,Xgeneral=NULL,method="MCMC",lowerMakesSparser=NULL,
                         family="gaussian",verbose=TRUE,control=gamselBayes.control())
@@ -58,17 +58,6 @@ gamselBayes <- function(y,Xlinear=NULL,Xgeneral=NULL,method="MCMC",lowerMakesSpa
    maxIter <- control$maxIter
    toler <- control$toler
    msgCodeControl <- control$msgCode
-
-   # Sort out conflicts between the "verbose" specification and the 
-   # "msgCode" specification.
-
-   if ((msgCodeVerbose==1)&(msgCodeControl==0))
-   {              
-      warnStr1 <- "The verbose and msgCode specifications conflict with"
-      warnStr2 <- "each other. The default value of msgCode=1 was used."
-      warning(paste(warnStr1,"\n  ",warnStr2,"\n",sep=""),immediate.=TRUE)
-      msgCodeControl <- 1 
-   }
 
    # Determine the value of "msgCode" based on current values of 
    # "msgCodeVerbose" and "msgCodeControl".

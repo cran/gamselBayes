@@ -2,7 +2,7 @@
 
 # Control function for gamselBayes().
 
-# Last changed: 03 AUG 2023
+# Last changed: 01 MAY 2025
 
 gamselBayes.control <- function(numIntKnots=25,truncateBasis=TRUE,numBasis=12,
                                 sigmabeta0=100000,sbeta=1000,sepsilon=1000,su=1000,rhoBeta=0.5,rhoU=0.5,
@@ -191,9 +191,9 @@ gamselBayes.control <- function(numIntKnots=25,truncateBasis=TRUE,numBasis=12,
    # Make sure that msgCode is legal:
 
    msgCode <- round(msgCode)
-   if (!any(msgCode==(0:2)))
+   if (!any(msgCode==c(1,2)))
    {
-      warnStr1 <- "The inputted message code number is not 0, 1 or 2."
+      warnStr1 <- "The inputted message code number is not 1 or 2."
       warnStr2 <- "The default value of 1 was used instead."
       warning(paste(warnStr1,"\n",warnStr2,"\n",sep=""),immediate.=TRUE)
       msgCode <- 1

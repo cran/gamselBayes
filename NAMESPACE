@@ -32,6 +32,3 @@ export(gamselBayes)
 export(gamselBayes.control)
 export(gamselBayesUpdate)
 export(gamselBayesVignette)
-
-
-

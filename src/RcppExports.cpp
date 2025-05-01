@@ -140,18 +140,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// omitMatCol
-arma::mat omitMatCol(arma::mat A, int j);
-RcppExport SEXP _gamselBayes_omitMatCol(SEXP ASEXP, SEXP jSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type A(ASEXP);
-    Rcpp::traits::input_parameter< int >::type j(jSEXP);
-    rcpp_result_gen = Rcpp::wrap(omitMatCol(A, j));
-    return rcpp_result_gen;
-END_RCPP
-}
 // omitVecEnt
 arma::vec omitVecEnt(arma::vec a, int j);
 RcppExport SEXP _gamselBayes_omitVecEnt(SEXP aSEXP, SEXP jSEXP) {
@@ -207,7 +195,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gamselBayes_gamselBayesMCMCinner", (DL_FUNC) &_gamselBayes_gamselBayesMCMCinner, 22},
     {"_gamselBayes_gamselBayesMFVBinner", (DL_FUNC) &_gamselBayes_gamselBayesMFVBinner, 23},
     {"_gamselBayes_logPhi", (DL_FUNC) &_gamselBayes_logPhi, 1},
-    {"_gamselBayes_omitMatCol", (DL_FUNC) &_gamselBayes_omitMatCol, 2},
     {"_gamselBayes_omitVecEnt", (DL_FUNC) &_gamselBayes_omitVecEnt, 2},
     {"_gamselBayes_printPercMsgs", (DL_FUNC) &_gamselBayes_printPercMsgs, 4},
     {"_gamselBayes_rTruncNormPos", (DL_FUNC) &_gamselBayes_rTruncNormPos, 1},
